@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CulturesModule } from './cultures/cultures.module';
 import { Culture } from './cultures/entities/culture.entity';
+import { DashboardModule } from './dashboard/dashboard.module';
 import { Farm } from './farms/entities/farm.entity';
 import { FarmsModule } from './farms/farms.module';
 import { Harvest } from './harvests/entities/harvest.entity';
@@ -35,6 +36,7 @@ import { ProducersModule } from './producers/producers.module';
     CulturesModule,
     HarvestsModule,
     PlantedCropsModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],
