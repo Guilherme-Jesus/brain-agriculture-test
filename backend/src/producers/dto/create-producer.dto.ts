@@ -1,8 +1,8 @@
 import { IsNotEmpty, IsString } from 'class-validator';
+import { IsCPFOrCNPJ } from 'src/utils/validators/cpf-or-cnpj.validator';
 
 export class CreateProducerDto {
-  @IsString()
-  @IsNotEmpty()
+  @IsCPFOrCNPJ()
   document: string;
 
   @IsString()
