@@ -62,23 +62,28 @@ export class FarmsService {
   }
 
   async update(id: string, updateFarmDto: UpdateFarmDto): Promise<Farm> {
-    const farm = await this.farmRepository.preload({
+    const farmToUpdate = await this.farmRepository.preload({
       id: id,
       ...updateFarmDto,
     });
 
-    if (!farm) {
-      throw new NotFoundException(`Farm with ID "${id}" not found`);
+    if (!farmToUpdate) {
+      throw new NotFoundException(`Farm with ID "${id}" not found.`);
     }
 
-    // Validação da Regra de Negócio das Áreas (também na atualização!)
-    if (farm.arableArea + farm.vegetationArea > farm.totalArea) {
+    const totalArea = Number(farmToUpdate.totalArea);
+    const arableArea = Number(farmToUpdate.arableArea);
+    const vegetationArea = Number(farmToUpdate.vegetationArea);
+
+    if (arableArea + vegetationArea > totalArea) {
       throw new BadRequestException(
         'The sum of arable and vegetation area cannot be greater than the total area.',
       );
     }
 
-    return this.farmRepository.save(farm);
+    await this.farmRepository.save(farmToUpdate);
+
+    return this.findOne(id);
   }
 
   async remove(id: string): Promise<void> {

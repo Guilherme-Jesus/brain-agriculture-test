@@ -90,41 +90,39 @@ export class PlantedCropsService {
     id: string,
     updatePlantedCropDto: UpdatePlantedCropDto,
   ): Promise<PlantedCrop> {
-    const plantedCrop = await this.plantedCropRepository.preload({
-      id: id,
-      ...updatePlantedCropDto,
+    const plantedCropToUpdate = await this.plantedCropRepository.findOne({
+      where: { id },
+      relations: ['farm'],
     });
 
-    if (!plantedCrop) {
+    if (!plantedCropToUpdate) {
       throw new NotFoundException(`Planted Crop with ID "${id}" not found.`);
     }
 
-    if (updatePlantedCropDto.plantedArea) {
-      const farm = await this.farmRepository.findOneBy({
-        id: plantedCrop.farm.id,
-      });
+    if (updatePlantedCropDto.plantedArea !== undefined) {
+      const farm = plantedCropToUpdate.farm;
 
-      if (!farm) {
-        throw new NotFoundException(
-          `Associated farm with ID "${plantedCrop.farm.id}" not found.`,
-        );
-      }
-
-      const otherCrops = await this.plantedCropRepository.find({
+      const allCropsInFarm = await this.plantedCropRepository.find({
         where: { farm: { id: farm.id } },
       });
-      const totalOtherArea = otherCrops
+
+      const totalAreaOfOtherCrops = allCropsInFarm
         .filter((crop) => crop.id !== id)
         .reduce((sum, crop) => sum + Number(crop.plantedArea), 0);
 
-      if (totalOtherArea + updatePlantedCropDto.plantedArea > farm.arableArea) {
+      const newTotalPlantedArea =
+        totalAreaOfOtherCrops + updatePlantedCropDto.plantedArea;
+
+      if (newTotalPlantedArea > farm.arableArea) {
         throw new BadRequestException(
           'The total planted area cannot exceed the arable area of the farm.',
         );
       }
     }
 
-    return this.plantedCropRepository.save(plantedCrop);
+    Object.assign(plantedCropToUpdate, updatePlantedCropDto);
+
+    return this.plantedCropRepository.save(plantedCropToUpdate);
   }
 
   async remove(id: string): Promise<void> {

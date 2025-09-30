@@ -70,6 +70,10 @@ export class PlantedCropsController {
     description: 'Cultura plantada atualizada com sucesso.',
     type: PlantedCrop,
   })
+  @ApiBadRequestResponse({
+    description:
+      'Área plantada excede a área arável da fazenda ou dados inválidos.',
+  })
   @ApiNotFoundResponse({ description: 'Cultura plantada não encontrada.' })
   update(
     @Param('id', ParseUUIDPipe) id: string,
