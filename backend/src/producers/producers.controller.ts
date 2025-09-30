@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
 } from '@nestjs/common';
@@ -26,14 +27,19 @@ export class ProducersController {
     return this.producersService.findAll();
   }
 
+  @Get(':id/farms')
+  findFarmsOfProducer(@Param('id', ParseUUIDPipe) id: string) {
+    return this.producersService.findWithFarms(id);
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.producersService.findOne(id);
   }
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProducerDto: UpdateProducerDto,
   ) {
     return this.producersService.update(id, updateProducerDto);
@@ -41,7 +47,7 @@ export class ProducersController {
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.producersService.remove(id);
   }
 }

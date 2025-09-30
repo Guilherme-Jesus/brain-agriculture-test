@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { HarvestsService } from './harvests.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { CreateHarvestDto } from './dto/create-harvest.dto';
 import { UpdateHarvestDto } from './dto/update-harvest.dto';
+import { HarvestsService } from './harvests.service';
 
 @Controller('harvests')
 export class HarvestsController {
@@ -18,17 +28,21 @@ export class HarvestsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.harvestsService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.harvestsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateHarvestDto: UpdateHarvestDto) {
-    return this.harvestsService.update(+id, updateHarvestDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateHarvestDto: UpdateHarvestDto,
+  ) {
+    return this.harvestsService.update(id, updateHarvestDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.harvestsService.remove(+id);
+  @HttpCode(204)
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.harvestsService.remove(id);
   }
 }
