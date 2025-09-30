@@ -12,6 +12,11 @@ describe('Producers (e2e)', () => {
   const mockProducersRepository = {
     create: jest.fn(),
     save: jest.fn(),
+    findOneBy: jest.fn(),
+    find: jest.fn(),
+    findOne: jest.fn(),
+    preload: jest.fn(),
+    delete: jest.fn(),
   };
 
   beforeAll(async () => {
@@ -43,6 +48,7 @@ describe('Producers (e2e)', () => {
     };
 
     jest.clearAllMocks();
+    mockProducersRepository.findOneBy.mockResolvedValue(null);
     mockProducersRepository.create.mockReturnValue(mockCreatedProducer);
     mockProducersRepository.save.mockResolvedValue(mockCreatedProducer);
 

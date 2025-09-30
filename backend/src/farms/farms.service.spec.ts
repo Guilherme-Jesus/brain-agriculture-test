@@ -127,6 +127,7 @@ describe('FarmsService (com Suites)', () => {
       const updatedFarm = { ...mockFarmEntity, ...updateDto };
       farmRepository.preload.mockResolvedValue(updatedFarm);
       farmRepository.save.mockResolvedValue(updatedFarm);
+      farmRepository.findOne.mockResolvedValue(updatedFarm);
 
       const result = await service.update('uuid-farm-1', updateDto);
 

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -29,6 +30,20 @@ export class PlantedCropsService {
     createPlantedCropDto: CreatePlantedCropDto,
   ): Promise<PlantedCrop> {
     const { farmId, cultureId, harvestId, plantedArea } = createPlantedCropDto;
+
+    const existingEntry = await this.plantedCropRepository.findOne({
+      where: {
+        farm: { id: farmId },
+        culture: { id: cultureId },
+        harvest: { id: harvestId },
+      },
+    });
+
+    if (existingEntry) {
+      throw new ConflictException(
+        'This culture has already been registered for this farm and harvest.',
+      );
+    }
 
     const farm = await this.farmRepository.findOneBy({ id: farmId });
     if (!farm) {
@@ -102,6 +117,10 @@ export class PlantedCropsService {
     if (updatePlantedCropDto.plantedArea !== undefined) {
       const farm = plantedCropToUpdate.farm;
 
+      if (!farm) {
+        throw new BadRequestException('Associated farm not found.');
+      }
+
       const allCropsInFarm = await this.plantedCropRepository.find({
         where: { farm: { id: farm.id } },
       });
@@ -113,7 +132,7 @@ export class PlantedCropsService {
       const newTotalPlantedArea =
         totalAreaOfOtherCrops + updatePlantedCropDto.plantedArea;
 
-      if (newTotalPlantedArea > farm.arableArea) {
+      if (newTotalPlantedArea > Number(farm.arableArea)) {
         throw new BadRequestException(
           'The total planted area cannot exceed the arable area of the farm.',
         );

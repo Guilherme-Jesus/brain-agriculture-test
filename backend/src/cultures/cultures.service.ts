@@ -17,8 +17,10 @@ export class CulturesService {
   ) {}
 
   async create(createCultureDto: CreateCultureDto): Promise<Culture> {
+    const normalizedName = createCultureDto.name.trim().toLowerCase();
+
     const existingCulture = await this.cultureRepository.findOneBy({
-      name: createCultureDto.name,
+      name: normalizedName,
     });
 
     if (existingCulture) {
@@ -27,7 +29,7 @@ export class CulturesService {
       );
     }
 
-    const culture = this.cultureRepository.create(createCultureDto);
+    const culture = this.cultureRepository.create({ name: normalizedName });
     return this.cultureRepository.save(culture);
   }
 
@@ -54,6 +56,21 @@ export class CulturesService {
     if (!culture) {
       throw new NotFoundException(`Culture with ID "${id}" not found.`);
     }
+
+    if (updateCultureDto.name) {
+      const normalizedName = updateCultureDto.name.trim().toLowerCase();
+      const existingCulture = await this.cultureRepository.findOneBy({
+        name: normalizedName,
+      });
+
+      if (existingCulture && existingCulture.id !== id) {
+        throw new ConflictException(
+          `Culture with name "${updateCultureDto.name}" already exists.`,
+        );
+      }
+      culture.name = normalizedName;
+    }
+
     return this.cultureRepository.save(culture);
   }
 

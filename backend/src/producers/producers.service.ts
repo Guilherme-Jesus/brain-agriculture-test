@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateProducerDto } from './dto/create-producer.dto';
@@ -13,7 +17,22 @@ export class ProducersService {
   ) {}
 
   async create(createProducerDto: CreateProducerDto): Promise<Producer> {
-    const producer = this.producerRepository.create(createProducerDto);
+    const existingProducerByDoc = await this.producerRepository.findOneBy({
+      document: createProducerDto.document,
+    });
+
+    if (existingProducerByDoc) {
+      throw new ConflictException(
+        `Producer with document "${createProducerDto.document}" already exists.`,
+      );
+    }
+
+    const producerData = {
+      ...createProducerDto,
+      producerName: createProducerDto.producerName.trim().toLowerCase(),
+    };
+
+    const producer = this.producerRepository.create(producerData);
     return this.producerRepository.save(producer);
   }
 
@@ -41,17 +60,27 @@ export class ProducersService {
     return producer;
   }
 
-  async remove(id: string): Promise<void> {
-    const result = await this.producerRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException(`Producer with ID "${id}" not found`);
-    }
-  }
-
   async update(
     id: string,
     updateProducerDto: UpdateProducerDto,
   ): Promise<Producer> {
+    if (updateProducerDto.producerName) {
+      updateProducerDto.producerName = updateProducerDto.producerName
+        .trim()
+        .toLowerCase();
+    }
+
+    if (updateProducerDto.document) {
+      const existingProducerByDoc = await this.producerRepository.findOneBy({
+        document: updateProducerDto.document,
+      });
+      if (existingProducerByDoc && existingProducerByDoc.id !== id) {
+        throw new ConflictException(
+          `Producer with document "${updateProducerDto.document}" already exists.`,
+        );
+      }
+    }
+
     const producer = await this.producerRepository.preload({
       id,
       ...updateProducerDto,
@@ -60,6 +89,14 @@ export class ProducersService {
     if (!producer) {
       throw new NotFoundException(`Producer with ID "${id}" not found`);
     }
+
     return this.producerRepository.save(producer);
+  }
+
+  async remove(id: string): Promise<void> {
+    const result = await this.producerRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Producer with ID "${id}" not found`);
+    }
   }
 }

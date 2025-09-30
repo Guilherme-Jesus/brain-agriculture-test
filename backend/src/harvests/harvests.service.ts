@@ -17,8 +17,10 @@ export class HarvestsService {
   ) {}
 
   async create(createHarvestDto: CreateHarvestDto): Promise<Harvest> {
+    const normalizedName = createHarvestDto.name.trim().toLowerCase();
+
     const existingHarvest = await this.harvestRepository.findOneBy({
-      name: createHarvestDto.name,
+      name: normalizedName,
     });
 
     if (existingHarvest) {
@@ -26,7 +28,7 @@ export class HarvestsService {
         `Harvest with name "${createHarvestDto.name}" already exists.`,
       );
     }
-    const harvest = this.harvestRepository.create(createHarvestDto);
+    const harvest = this.harvestRepository.create({ name: normalizedName });
     return this.harvestRepository.save(harvest);
   }
 
@@ -53,6 +55,21 @@ export class HarvestsService {
     if (!harvest) {
       throw new NotFoundException(`Harvest with ID "${id}" not found.`);
     }
+
+    if (updateHarvestDto.name) {
+      const normalizedName = updateHarvestDto.name.trim().toLowerCase();
+      const existingHarvest = await this.harvestRepository.findOneBy({
+        name: normalizedName,
+      });
+
+      if (existingHarvest && existingHarvest.id !== id) {
+        throw new ConflictException(
+          `Harvest with name "${updateHarvestDto.name}" already exists.`,
+        );
+      }
+      harvest.name = normalizedName;
+    }
+
     return this.harvestRepository.save(harvest);
   }
 
