@@ -6,8 +6,8 @@ export class Producer {
   id: string;
 
   @Column({ unique: true })
-  documento: string;
+  document: string;
 
   @Column()
-  nomeProdutor: string;
+  producerName: string;
 }
