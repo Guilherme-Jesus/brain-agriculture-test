@@ -3,26 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Farm } from 'src/farms/entities/farm.entity';
 import { PlantedCrop } from 'src/planted-crops/entities/planted-crop.entity';
 import { Repository } from 'typeorm';
-
-interface FarmStatsRaw {
-  totalFarms: string;
-  totalAreaInHectares: string;
-}
-
-interface FarmsByStateRaw {
-  state: string;
-  count: string;
-}
-
-interface FarmsByCultureRaw {
-  culture: string;
-  count: string;
-}
-
-interface LandUseRaw {
-  totalArableArea: string;
-  totalVegetationArea: string;
-}
+import {
+  DashboardResponseDto,
+  FarmsByCultureDto,
+  FarmsByStateDto,
+  LandUseDto,
+} from './dto/dashboard-response.dto';
 
 @Injectable()
 export class DashboardService {
@@ -39,7 +25,7 @@ export class DashboardService {
       .createQueryBuilder('farm')
       .select('COUNT(farm.id)', 'totalFarms')
       .addSelect('SUM(farm.totalArea)', 'totalAreaInHectares')
-      .getRawOne<FarmStatsRaw>();
+      .getRawOne<DashboardResponseDto>();
 
     // 2. Gráfico de Pizza por Estado
     const farmsByState = await this.farmRepository
@@ -47,7 +33,7 @@ export class DashboardService {
       .select('farm.state', 'state')
       .addSelect('COUNT(*)', 'count')
       .groupBy('farm.state')
-      .getRawMany<FarmsByStateRaw>();
+      .getRawMany<FarmsByStateDto>();
 
     // 3. Gráfico de Pizza por Cultura
     // Conforme documentação: innerJoin para fazer join com relações
@@ -58,14 +44,14 @@ export class DashboardService {
       .select('culture.name', 'culture')
       .addSelect('COUNT(DISTINCT farm.id)', 'count')
       .groupBy('culture.name')
-      .getRawMany<FarmsByCultureRaw>();
+      .getRawMany<FarmsByCultureDto>();
 
     // 4. Gráfico de Pizza por Uso de Solo
     const landUse = await this.farmRepository
       .createQueryBuilder('farm')
       .select('SUM(farm.arableArea)', 'totalArableArea')
       .addSelect('SUM(farm.vegetationArea)', 'totalVegetationArea')
-      .getRawOne<LandUseRaw>();
+      .getRawOne<LandUseDto>();
 
     // Validações para evitar erros de null/undefined
     if (!farmStats || !landUse) {
@@ -74,19 +60,19 @@ export class DashboardService {
 
     // Monta o objeto de resposta final
     return {
-      totalFarms: parseInt(farmStats.totalFarms, 10),
-      totalAreaInHectares: parseFloat(farmStats.totalAreaInHectares),
+      totalFarms: farmStats.totalFarms,
+      totalAreaInHectares: farmStats.totalAreaInHectares,
       farmsByState: farmsByState.map((item) => ({
         state: item.state,
-        count: parseInt(item.count, 10),
+        count: item.count,
       })),
       farmsByCulture: farmsByCulture.map((item) => ({
         culture: item.culture,
-        count: parseInt(item.count, 10),
+        count: item.count,
       })),
       landUse: {
-        totalArableArea: parseFloat(landUse.totalArableArea),
-        totalVegetationArea: parseFloat(landUse.totalVegetationArea),
+        totalArableArea: landUse.totalArableArea,
+        totalVegetationArea: landUse.totalVegetationArea,
       },
     };
   }

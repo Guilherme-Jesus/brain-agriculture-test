@@ -1,19 +1,36 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsPositive, IsUUID } from 'class-validator';
 
 export class CreatePlantedCropDto {
+  @ApiProperty({
+    description: 'Área plantada em hectares para esta cultura',
+    example: 100,
+  })
   @IsNumber()
   @IsPositive()
-  plantedArea: number; // Área plantada em hectares para esta cultura
+  plantedArea: number;
 
+  @ApiProperty({
+    description: 'ID da Fazenda onde foi plantado',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
   @IsUUID()
   @IsNotEmpty()
-  farmId: string; // ID da Fazenda onde foi plantado
+  farmId: string;
 
+  @ApiProperty({
+    description: 'ID da Cultura que foi plantada',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
   @IsUUID()
   @IsNotEmpty()
-  cultureId: string; // ID da Cultura que foi plantada
+  cultureId: string;
 
+  @ApiProperty({
+    description: 'ID da Safra em que foi plantado',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
   @IsUUID()
   @IsNotEmpty()
-  harvestId: string; // ID da Safra em que foi plantado
+  harvestId: string;
 }
