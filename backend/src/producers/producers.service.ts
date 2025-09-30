@@ -36,7 +36,18 @@ export class ProducersService {
     }
   }
 
-  update(id: string, updateProducerDto: UpdateProducerDto) {
-    return `This action updates a #${id} producer`;
+  async update(
+    id: string,
+    updateProducerDto: UpdateProducerDto,
+  ): Promise<Producer> {
+    const producer = await this.producerRepository.preload({
+      id,
+      ...updateProducerDto,
+    });
+
+    if (!producer) {
+      throw new NotFoundException(`Producer with ID "${id}" not found`);
+    }
+    return this.producerRepository.save(producer);
   }
 }
