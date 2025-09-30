@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Farm } from 'src/farms/entities/farm.entity';
-import { PlantedCrop } from 'src/planted-crops/entities/planted-crop.entity';
 import { Repository } from 'typeorm';
+import { Farm } from '../farms/entities/farm.entity';
+import { PlantedCrop } from '../planted-crops/entities/planted-crop.entity';
 import {
   DashboardResponseDto,
   FarmsByCultureDto,
@@ -59,20 +59,27 @@ export class DashboardService {
     }
 
     // Monta o objeto de resposta final
+    // TypeORM retorna COUNT() e SUM() como strings, então precisamos converter para números
     return {
-      totalFarms: farmStats.totalFarms,
-      totalAreaInHectares: farmStats.totalAreaInHectares,
+      totalFarms: parseInt(farmStats.totalFarms as unknown as string, 10),
+      totalAreaInHectares: parseFloat(
+        farmStats.totalAreaInHectares as unknown as string,
+      ),
       farmsByState: farmsByState.map((item) => ({
         state: item.state,
-        count: item.count,
+        count: parseInt(item.count as unknown as string, 10),
       })),
       farmsByCulture: farmsByCulture.map((item) => ({
         culture: item.culture,
-        count: item.count,
+        count: parseInt(item.count as unknown as string, 10),
       })),
       landUse: {
-        totalArableArea: landUse.totalArableArea,
-        totalVegetationArea: landUse.totalVegetationArea,
+        totalArableArea: parseFloat(
+          landUse.totalArableArea as unknown as string,
+        ),
+        totalVegetationArea: parseFloat(
+          landUse.totalVegetationArea as unknown as string,
+        ),
       },
     };
   }
