@@ -1,5 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
@@ -16,10 +16,15 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('/ (GET) should redirect to /api-docs', () => {
+    return request
+      .default(app.getHttpServer())
       .get('/')
-      .expect(200)
-      .expect('Hello World!');
+      .expect(302) // 1. Esperamos um status de redirecionamento
+      .expect('Location', '/api-docs'); // 2. Verificamos se o cabeçalho 'Location' aponta para o lugar certo
   });
 });
