@@ -21,6 +21,18 @@ export class ProducersService {
     return this.producerRepository.find();
   }
 
+  async findWithFarms(id: string): Promise<Producer> {
+    const producer = await this.producerRepository.findOne({
+      where: { id },
+      relations: ['farms'],
+    });
+
+    if (!producer) {
+      throw new NotFoundException(`Producer with ID "${id}" not found`);
+    }
+    return producer;
+  }
+
   async findOne(id: string): Promise<Producer> {
     const producer = await this.producerRepository.findOneBy({ id });
     if (!producer) {

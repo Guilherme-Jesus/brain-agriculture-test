@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { FarmsService } from './farms.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { CreateFarmDto } from './dto/create-farm.dto';
 import { UpdateFarmDto } from './dto/update-farm.dto';
+import { FarmsService } from './farms.service';
 
 @Controller('farms')
 export class FarmsController {
@@ -18,17 +28,21 @@ export class FarmsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.farmsService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.farmsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFarmDto: UpdateFarmDto) {
-    return this.farmsService.update(+id, updateFarmDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateFarmDto: UpdateFarmDto,
+  ) {
+    return this.farmsService.update(id, updateFarmDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.farmsService.remove(+id);
+  @HttpCode(204)
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.farmsService.remove(id);
   }
 }
