@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Farm } from 'src/farms/entities/farm.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('producers')
 export class Producer {
@@ -10,4 +11,7 @@ export class Producer {
 
   @Column()
   producerName: string;
+
+  @OneToMany(() => Farm, (farm) => farm.producer)
+  farms: Farm[];
 }

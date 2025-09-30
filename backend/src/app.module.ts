@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { Farm } from './farms/entities/farm.entity';
+import { FarmsModule } from './farms/farms.module';
 import { Producer } from './producers/entities/producer.entity';
 import { ProducersModule } from './producers/producers.module';
 
@@ -19,10 +21,11 @@ import { ProducersModule } from './producers/producers.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [Producer],
+      entities: [Producer, Farm],
       synchronize: true,
     }),
     ProducersModule,
+    FarmsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
