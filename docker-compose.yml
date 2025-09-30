@@ -1,0 +1,31 @@
+services:
+  # Banco de Dados
+  postgres:
+    image: postgres:latest
+    container_name: brain-agriculture-db
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Backend NestJS
+  backend:
+    container_name: brain-agriculture-backend-dev
+    build:
+      context: ./backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - postgres
+    env_file:
+      - ./.env
+
+volumes:
+  postgres_data:
