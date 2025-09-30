@@ -9,6 +9,7 @@ import { Farm } from 'src/farms/entities/farm.entity';
 import { Harvest } from 'src/harvests/entities/harvest.entity';
 import { Repository } from 'typeorm';
 import { CreatePlantedCropDto } from './dto/create-planted-crop.dto';
+import { UpdatePlantedCropDto } from './dto/update-planted-crop.dto';
 import { PlantedCrop } from './entities/planted-crop.entity';
 
 @Injectable()
@@ -29,7 +30,6 @@ export class PlantedCropsService {
   ): Promise<PlantedCrop> {
     const { farmId, cultureId, harvestId, plantedArea } = createPlantedCropDto;
 
-    // 1. Validação: Buscar todas as entidades pelos IDs fornecidos
     const farm = await this.farmRepository.findOneBy({ id: farmId });
     if (!farm) {
       throw new NotFoundException(`Farm with ID "${farmId}" not found.`);
@@ -45,8 +45,6 @@ export class PlantedCropsService {
       throw new NotFoundException(`Harvest with ID "${harvestId}" not found.`);
     }
 
-    // 2. Validação da Regra de Negócio: Área plantada vs. Área agricultável
-    // Busca todas as culturas já plantadas nesta fazenda
     const existingCrops = await this.plantedCropRepository.find({
       where: { farm: { id: farmId } },
     });
@@ -61,7 +59,6 @@ export class PlantedCropsService {
       );
     }
 
-    // 3. Se tudo estiver ok, cria e salva a nova entrada
     const newPlantedCrop = this.plantedCropRepository.create({
       plantedArea,
       farm,
@@ -70,5 +67,70 @@ export class PlantedCropsService {
     });
 
     return this.plantedCropRepository.save(newPlantedCrop);
+  }
+
+  async findAll(): Promise<PlantedCrop[]> {
+    return this.plantedCropRepository.find({
+      relations: ['farm', 'culture', 'harvest'],
+    });
+  }
+
+  async findOne(id: string): Promise<PlantedCrop> {
+    const plantedCrop = await this.plantedCropRepository.findOne({
+      where: { id },
+      relations: ['farm', 'culture', 'harvest'],
+    });
+    if (!plantedCrop) {
+      throw new NotFoundException(`Planted Crop with ID "${id}" not found.`);
+    }
+    return plantedCrop;
+  }
+
+  async update(
+    id: string,
+    updatePlantedCropDto: UpdatePlantedCropDto,
+  ): Promise<PlantedCrop> {
+    const plantedCrop = await this.plantedCropRepository.preload({
+      id: id,
+      ...updatePlantedCropDto,
+    });
+
+    if (!plantedCrop) {
+      throw new NotFoundException(`Planted Crop with ID "${id}" not found.`);
+    }
+
+    if (updatePlantedCropDto.plantedArea) {
+      const farm = await this.farmRepository.findOneBy({
+        id: plantedCrop.farm.id,
+      });
+
+      if (!farm) {
+        throw new NotFoundException(
+          `Associated farm with ID "${plantedCrop.farm.id}" not found.`,
+        );
+      }
+
+      const otherCrops = await this.plantedCropRepository.find({
+        where: { farm: { id: farm.id } },
+      });
+      const totalOtherArea = otherCrops
+        .filter((crop) => crop.id !== id)
+        .reduce((sum, crop) => sum + Number(crop.plantedArea), 0);
+
+      if (totalOtherArea + updatePlantedCropDto.plantedArea > farm.arableArea) {
+        throw new BadRequestException(
+          'The total planted area cannot exceed the arable area of the farm.',
+        );
+      }
+    }
+
+    return this.plantedCropRepository.save(plantedCrop);
+  }
+
+  async remove(id: string): Promise<void> {
+    const result = await this.plantedCropRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Planted Crop with ID "${id}" not found.`);
+    }
   }
 }
