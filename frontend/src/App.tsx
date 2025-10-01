@@ -1,35 +1,31 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import { useGetDashboardDataQuery } from './store/api/dashboard-api'
-import viteLogo from '/vite.svg'
+import Layout from '@/components/templates/Layout'
+import DashboardPage from '@/pages/DashboardPage/DashboardPage'
+import { ProducersPage } from '@/pages/ProducersPage/ProducersPage'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+
+const FarmsPage = () => <h1>Lista de Fazendas</h1>
+const CulturesPage = () => <h1>Lista de Culturas</h1>
+const SeasonsPage = () => <h1>Lista de Safras</h1>
+const ReportsPage = () => <h1>Relatórios</h1>
+const ProducerDetailPage = () => <h1>Detalhes do Produtor</h1>
+const ProducerFormPage = () => <h1>Formulário de Produtor</h1>
 
 function App() {
-  const [count, setCount] = useState(0)
-  const { data, isLoading, error } = useGetDashboardDataQuery()
-  console.log(data)
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="producers" element={<ProducersPage />} />
+          <Route path="producers/:id" element={<ProducerDetailPage />} />
+          <Route path="producers/editar/:id" element={<ProducerFormPage />} />
+          <Route path="farms" element={<FarmsPage />} />
+          <Route path="cultures" element={<CulturesPage />} />
+          <Route path="seasons" element={<SeasonsPage />} />
+          <Route path="reports" element={<ReportsPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 

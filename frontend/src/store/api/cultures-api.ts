@@ -9,6 +9,14 @@ export const culturesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllCultures: builder.query<CulturesResponse[], void>({
       query: () => '/cultures',
+      transformResponse: (response: CulturesResponse[]) => {
+        if (response.length === 0) return []
+        const cultures = response.map((culture) => ({
+          ...culture,
+          name: culture.name.charAt(0).toUpperCase() + culture.name.slice(1),
+        }))
+        return cultures
+      },
       providesTags: ['Culture'],
     }),
     getCultureById: builder.query<CulturesResponse, string>({
@@ -21,6 +29,7 @@ export const culturesApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
+      invalidatesTags: ['Culture'],
     }),
     updateCulture: builder.mutation<CulturesResponse, UpdateCultureDto>({
       query: (body) => ({
@@ -28,12 +37,14 @@ export const culturesApiSlice = apiSlice.injectEndpoints({
         method: 'PATCH',
         body,
       }),
+      invalidatesTags: ['Culture'],
     }),
     deleteCulture: builder.mutation<void, string>({
       query: (id) => ({
         url: `/cultures/${id}`,
         method: 'DELETE',
       }),
+      invalidatesTags: ['Culture'],
     }),
   }),
 })
