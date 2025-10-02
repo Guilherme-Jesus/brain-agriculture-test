@@ -1,13 +1,5 @@
-import SearchBar from '@/components/molecules/SearchBar'
-import { Menu, Siren } from 'lucide-react'
-import {
-  HeaderWrapper,
-  LeftSection,
-  MenuButton,
-  NotificationBadge,
-  NotificationButton,
-  RightSection,
-} from './header.styles'
+import { Menu } from 'lucide-react'
+import * as S from './header.styles'
 
 interface HeaderProps {
   onMenuToggle?: () => void
@@ -15,19 +7,12 @@ interface HeaderProps {
 
 export default function Header({ onMenuToggle }: HeaderProps) {
   return (
-    <HeaderWrapper>
-      <LeftSection>
-        <MenuButton onClick={onMenuToggle}>
+    <S.HeaderWrapper>
+      <S.LeftSection>
+        <S.MenuButton onClick={onMenuToggle}>
           <Menu />
-        </MenuButton>
-        <SearchBar placeholder="Buscar..." />
-      </LeftSection>
-      <RightSection>
-        <NotificationButton>
-          <Siren />
-          <NotificationBadge />
-        </NotificationButton>
-      </RightSection>
-    </HeaderWrapper>
+        </S.MenuButton>
+      </S.LeftSection>
+    </S.HeaderWrapper>
   )
 }

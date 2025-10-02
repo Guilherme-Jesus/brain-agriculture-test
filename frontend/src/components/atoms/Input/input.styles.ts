@@ -8,7 +8,7 @@ const InputWrapper = styled.div`
 `
 
 const Label = styled.label`
-  font-size: 0.875rem;
+  font-size: ${({ theme }) => theme.fontSize.sm};
   font-weight: 500;
   color: ${({ theme }) => theme.colors.text.primary};
 `
@@ -16,7 +16,7 @@ const Label = styled.label`
 const StyledInput = styled.input<{ $hasError?: boolean }>`
   width: 100%;
   padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
+  font-size: ${({ theme }) => theme.fontSize.sm};
   border: 1px solid
     ${({ theme, $hasError }) =>
       $hasError ? theme.colors.error : theme.colors.border};
@@ -42,7 +42,7 @@ const StyledInput = styled.input<{ $hasError?: boolean }>`
 `
 
 const ErrorText = styled.span`
-  font-size: 0.75rem;
+  font-size: ${({ theme }) => theme.fontSize.sm};
   color: ${({ theme }) => theme.colors.error};
 `
 

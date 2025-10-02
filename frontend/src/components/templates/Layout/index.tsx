@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import Header from '../../organisms/Header'
 import Sidebar from '../../organisms/Sidebar'
-import { Content, ContentWrapper, LayoutContainer, Overlay } from './styles'
+import * as S from './styles'
 
 export default function Layout() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
@@ -17,19 +17,19 @@ export default function Layout() {
   }
 
   return (
-    <LayoutContainer>
+    <S.LayoutContainer>
       <Sidebar
         isCollapsed={isSidebarCollapsed}
         isOpen={isSidebarOpen}
         onToggle={toggleSidebar}
       />
-      <Overlay $isOpen={isSidebarOpen} onClick={toggleMobileSidebar} />
-      <ContentWrapper $isSidebarCollapsed={isSidebarCollapsed}>
+      <S.Overlay $isOpen={isSidebarOpen} onClick={toggleMobileSidebar} />
+      <S.ContentWrapper $isSidebarCollapsed={isSidebarCollapsed}>
         <Header onMenuToggle={toggleMobileSidebar} />
-        <Content>
+        <S.Content>
           <Outlet />
-        </Content>
-      </ContentWrapper>
-    </LayoutContainer>
+        </S.Content>
+      </S.ContentWrapper>
+    </S.LayoutContainer>
   )
 }

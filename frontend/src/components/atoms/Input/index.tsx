@@ -1,5 +1,4 @@
-import { ErrorText, InputWrapper, Label, StyledInput } from './input.styles'
-
+import * as S from './input.styles'
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string
   error?: string
@@ -7,10 +6,10 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 export default function Input({ label, error, ...props }: InputProps) {
   return (
-    <InputWrapper>
-      {label && <Label>{label}</Label>}
-      <StyledInput $hasError={!!error} {...props} />
-      {error && <ErrorText>{error}</ErrorText>}
-    </InputWrapper>
+    <S.InputWrapper>
+      {label && <S.Label>{label}</S.Label>}
+      <S.StyledInput $hasError={!!error} {...props} />
+      {error && <S.ErrorText>{error}</S.ErrorText>}
+    </S.InputWrapper>
   )
 }

@@ -7,7 +7,7 @@ import {
   Tooltip,
   type PieLabelRenderProps,
 } from 'recharts'
-import { ChartTitle, ChartWrapper, COLORS } from './pie-chart.styles'
+import * as S from './pie-chart.styles'
 
 interface PieChartProps {
   data: { name: string; value: number }[] | undefined
@@ -16,8 +16,8 @@ interface PieChartProps {
 
 export default function PieChart({ data, title }: PieChartProps) {
   return (
-    <ChartWrapper>
-      <ChartTitle>{title}</ChartTitle>
+    <S.ChartWrapper>
+      <S.ChartTitle>{title}</S.ChartTitle>
       <ResponsiveContainer width="100%" height={500}>
         <RechartsPie margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
           <Pie
@@ -50,7 +50,7 @@ export default function PieChart({ data, title }: PieChartProps) {
             {data?.map((_, index) => (
               <Cell
                 key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
+                fill={S.COLORS[index % S.COLORS.length]}
               />
             ))}
           </Pie>
@@ -80,6 +80,6 @@ export default function PieChart({ data, title }: PieChartProps) {
           />
         </RechartsPie>
       </ResponsiveContainer>
-    </ChartWrapper>
+    </S.ChartWrapper>
   )
 }

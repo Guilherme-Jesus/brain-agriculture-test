@@ -24,6 +24,7 @@ export const plantedCropApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
+      invalidatesTags: ['PlantedCrop'],
     }),
     updatePlantedCrop: builder.mutation<
       PlantedCropResponse,
@@ -34,12 +35,14 @@ export const plantedCropApiSlice = apiSlice.injectEndpoints({
         method: 'PATCH',
         body,
       }),
+      invalidatesTags: ['PlantedCrop'],
     }),
     deletePlantedCrop: builder.mutation<void, string>({
       query: (id) => ({
         url: `/planted-crops/${id}`,
         method: 'DELETE',
       }),
+      invalidatesTags: ['PlantedCrop'],
     }),
   }),
 })

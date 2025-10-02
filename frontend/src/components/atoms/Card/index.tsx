@@ -1,4 +1,4 @@
-import { StyledCard } from './card.styles'
+import * as S from './card.styles'
 
 interface CardProps {
   children: React.ReactNode
@@ -12,8 +12,8 @@ export default function Card({
   hover = false,
 }: CardProps) {
   return (
-    <StyledCard $padding={padding} $hover={hover}>
+    <S.StyledCard $padding={padding} $hover={hover}>
       {children}
-    </StyledCard>
+    </S.StyledCard>
   )
 }

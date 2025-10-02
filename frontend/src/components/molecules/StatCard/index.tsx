@@ -11,14 +11,8 @@ import {
   Users,
   type LucideIcon,
 } from 'lucide-react'
-import {
-  IconWrapper,
-  StatCardWrapper,
-  StatHeader,
-  StatInfo,
-  StatValue,
-  Trend,
-} from './stat-card.styles'
+
+import * as S from './stat-card.styles'
 
 export interface Trend {
   value: number
@@ -47,28 +41,28 @@ export default function StatCard({ title, value, icon, trend }: StatCardData) {
 
   return (
     <Card hover padding="md">
-      <StatCardWrapper>
-        <StatHeader>
-          <StatInfo>
+      <S.StatCardWrapper>
+        <S.StatHeader>
+          <S.StatInfo>
             <Text variant="caption" color="secondary">
               {title}
             </Text>
-            <StatValue>{value}</StatValue>
-          </StatInfo>
-          <IconWrapper>
+            <S.StatValue>{value}</S.StatValue>
+          </S.StatInfo>
+          <S.IconWrapper>
             <IconComponent size={24} />
-          </IconWrapper>
-        </StatHeader>
+          </S.IconWrapper>
+        </S.StatHeader>
         {trend && (
-          <Trend $isPositive={trend.isPositive}>
+          <S.Trend $isPositive={trend.isPositive}>
             <span>{trend.isPositive ? '↑' : '↓'}</span>
             <span>{Math.abs(trend.value)}%</span>
             <Text variant="caption" color="light">
               vs último mês
             </Text>
-          </Trend>
+          </S.Trend>
         )}
-      </StatCardWrapper>
+      </S.StatCardWrapper>
     </Card>
   )
 }

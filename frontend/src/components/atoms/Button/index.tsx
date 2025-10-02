@@ -86,13 +86,13 @@ const StyledButton = styled.button<{
   }
 `
 
-export const Button: React.FC<ButtonProps> = ({
+export default function Button({
   variant = 'primary',
   size = 'md',
   children,
   fullWidth = false,
   ...props
-}) => {
+}: ButtonProps) {
   return (
     <StyledButton
       $variant={variant}

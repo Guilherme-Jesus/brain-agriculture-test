@@ -21,6 +21,7 @@ export const harvestsApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
+      invalidatesTags: ['Harvest'],
     }),
     updateHarvest: builder.mutation<HarvestsResponse, UpdateHarvestDto>({
       query: (body) => ({
@@ -28,12 +29,14 @@ export const harvestsApiSlice = apiSlice.injectEndpoints({
         method: 'PATCH',
         body,
       }),
+      invalidatesTags: ['Harvest'],
     }),
     deleteHarvest: builder.mutation<void, string>({
       query: (id) => ({
         url: `/harvests/${id}`,
         method: 'DELETE',
       }),
+      invalidatesTags: ['Harvest'],
     }),
   }),
 })

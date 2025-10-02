@@ -1,60 +1,111 @@
-import { Button } from '@/components/atoms/Button'
+import Button from '@/components/atoms/Button'
+import Input from '@/components/atoms/Input'
 import Modal from '@/components/atoms/Modal'
 import Text from '@/components/atoms/Text'
-import type { ProducersResponse } from '@/types/producers'
-import type React from 'react'
-import { useState } from 'react'
-import styled from 'styled-components'
-
 import { DataTable } from '@/components/molecules/DataTable'
-import ProducerForm from '@/components/organisms/ProducerForm'
+import FormActions from '@/components/molecules/FormActions'
+import {
+  producerSchema,
+  type ProducerFormData,
+} from '@/schemas/producer.schema'
+import {
+  useCreateProducerMutation,
+  useDeleteProducerMutation,
+  useGetAllProducersQuery,
+  useUpdateProducerMutation,
+} from '@/store/api/producers-api'
+import type { ProducersResponse } from '@/types/producers'
+import { formatarCNPJ, formatarCPF } from '@/utils/validators'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import * as S from './producers.styles'
 
-const PageHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing.md};
-`
+export default function ProducersPage() {
+  const { data: producers = [] } = useGetAllProducersQuery()
 
-export const ProducersPage: React.FC = () => {
-  const [producers, setProducers] = useState<ProducersResponse[]>([])
+  const [createProducer] = useCreateProducerMutation()
+  const [updateProducer] = useUpdateProducerMutation()
+  const [deleteProducer] = useDeleteProducerMutation()
+
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingProducer, setEditingProducer] =
     useState<ProducersResponse | null>(null)
 
-  const handleSubmit = (data: { cpfCnpj: string; nome: string }) => {
-    if (editingProducer) {
-      setProducers(
-        producers.map((p) =>
-          p.id === editingProducer.id
-            ? { ...p, document: data.cpfCnpj, producerName: data.nome }
-            : p
-        )
-      )
-    } else {
-      const newProducer: ProducersResponse = {
-        id: String(Date.now()),
-        document: data.cpfCnpj,
-        producerName: data.nome,
+  const {
+    control,
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<ProducerFormData>({
+    resolver: zodResolver(producerSchema),
+    mode: 'onChange',
+    defaultValues: {
+      document: '',
+      producerName: '',
+    },
+  })
+
+  const onSubmit = async (data: ProducerFormData) => {
+    try {
+      // Remove formatação antes de enviar
+      const cleanDocument = data.document.replace(/\D/g, '')
+
+      if (editingProducer) {
+        await updateProducer({
+          id: editingProducer.id,
+          document: cleanDocument,
+          producerName: data.producerName,
+        }).unwrap()
+      } else {
+        await createProducer({
+          document: cleanDocument,
+          producerName: data.producerName,
+        }).unwrap()
       }
-      setProducers([...producers, newProducer])
+      handleCloseModal()
+    } catch (error) {
+      console.error('Erro ao salvar produtor:', error)
     }
+  }
+
+  const handleCloseModal = () => {
     setIsModalOpen(false)
     setEditingProducer(null)
+    reset({
+      document: '',
+      producerName: '',
+    })
+  }
+
+  const handleOpenCreate = () => {
+    setEditingProducer(null)
+    reset({
+      document: '',
+      producerName: '',
+    })
+    setIsModalOpen(true)
   }
 
   const handleEdit = (producer: ProducersResponse) => {
     setEditingProducer(producer)
+    reset({
+      document: producer.document,
+      producerName: producer.producerName,
+    })
     setIsModalOpen(true)
   }
 
-  const handleDelete = (producer: ProducersResponse) => {
+  const handleDelete = async (producer: ProducersResponse) => {
     if (
       confirm(`Deseja realmente excluir o produtor ${producer.producerName}?`)
     ) {
-      setProducers(producers.filter((p) => p.id !== producer.id))
+      try {
+        await deleteProducer(producer.id).unwrap()
+      } catch (error) {
+        console.error('Erro ao excluir produtor:', error)
+      }
     }
   }
 
@@ -65,14 +116,14 @@ export const ProducersPage: React.FC = () => {
 
   return (
     <>
-      <PageHeader>
+      <S.PageHeader>
         <Text variant="h1" weight="bold">
           Produtores
         </Text>
-        <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+        <Button variant="primary" onClick={handleOpenCreate}>
           + Novo Produtor
         </Button>
-      </PageHeader>
+      </S.PageHeader>
 
       <DataTable
         data={producers}
@@ -83,27 +134,59 @@ export const ProducersPage: React.FC = () => {
 
       <Modal
         isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false)
-          setEditingProducer(null)
-        }}
+        onClose={handleCloseModal}
         title={editingProducer ? 'Editar Produtor' : 'Novo Produtor'}
       >
-        <ProducerForm
-          initialData={
-            editingProducer
-              ? {
-                  cpfCnpj: editingProducer.document,
-                  nome: editingProducer.producerName,
+        <S.FormWrapper onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            name="document"
+            control={control}
+            render={({ field }) => {
+              const handleDocumentChange = (
+                e: React.ChangeEvent<HTMLInputElement>
+              ) => {
+                const value = e.target.value
+                const clean = value.replace(/\D/g, '')
+
+                // Formata conforme o tamanho
+                let formatted = value
+                if (clean.length <= 11) {
+                  formatted = formatarCPF(value)
+                } else {
+                  formatted = formatarCNPJ(value)
                 }
-              : undefined
-          }
-          onSubmit={handleSubmit}
-          onCancel={() => {
-            setIsModalOpen(false)
-            setEditingProducer(null)
-          }}
-        />
+
+                field.onChange(formatted)
+              }
+
+              return (
+                <Input
+                  label="CPF/CNPJ"
+                  placeholder="Digite o CPF (11 dígitos) ou CNPJ (14 dígitos)"
+                  value={field.value}
+                  onChange={handleDocumentChange}
+                  error={errors.document?.message}
+                  disabled={!!editingProducer}
+                  maxLength={18}
+                />
+              )
+            }}
+          />
+
+          <Input
+            label="Nome do Produtor"
+            placeholder="Digite o nome completo"
+            {...register('producerName')}
+            error={errors.producerName?.message}
+          />
+
+          <FormActions
+            onCancel={handleCloseModal}
+            isLoading={isSubmitting}
+            isDisabled={!isValid}
+            submitText={editingProducer ? 'Salvar' : 'Criar'}
+          />
+        </S.FormWrapper>
       </Modal>
     </>
   )

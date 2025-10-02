@@ -1,17 +1,7 @@
 import Card from '@/components/atoms/Card'
 import Text from '@/components/atoms/Text'
-import {
-  StatusBadge,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRowStyled,
-  TableTitle,
-  TableWrapper,
-} from './data-table.styles'
 
+import * as S from './data-table.styles'
 export interface TableRow {
   id: string
   name: string
@@ -28,43 +18,45 @@ interface DataTableProps {
 export default function DataTable({ title, data }: DataTableProps) {
   return (
     <Card padding="md">
-      <TableTitle>
+      <S.TableTitle>
         <Text variant="h3" weight="semibold">
           {title}
         </Text>
-      </TableTitle>
-      <TableWrapper>
-        <Table>
-          <TableHead>
+      </S.TableTitle>
+      <S.TableWrapper>
+        <S.Table>
+          <S.TableHead>
             <tr>
-              <TableHeader>Nome</TableHeader>
-              <TableHeader>Status</TableHeader>
-              <TableHeader>Data</TableHeader>
-              <TableHeader>Valor</TableHeader>
+              <S.TableHeader>Nome</S.TableHeader>
+              <S.TableHeader>Status</S.TableHeader>
+              <S.TableHeader>Data</S.TableHeader>
+              <S.TableHeader>Valor</S.TableHeader>
             </tr>
-          </TableHead>
-          <TableBody>
+          </S.TableHead>
+          <S.TableBody>
             {data.map((row) => (
-              <TableRowStyled key={row.id}>
-                <TableCell>
+              <S.TableRowStyled key={row.id}>
+                <S.TableCell>
                   <Text weight="medium">{row.name}</Text>
-                </TableCell>
-                <TableCell>
-                  <StatusBadge $status={row.status}>{row.status}</StatusBadge>
-                </TableCell>
-                <TableCell>
+                </S.TableCell>
+                <S.TableCell>
+                  <S.StatusBadge $status={row.status}>
+                    {row.status}
+                  </S.StatusBadge>
+                </S.TableCell>
+                <S.TableCell>
                   <Text color="secondary">{row.date}</Text>
-                </TableCell>
-                <TableCell>
+                </S.TableCell>
+                <S.TableCell>
                   <Text weight="semibold">
                     R$ {row.amount.toLocaleString('pt-BR')}
                   </Text>
-                </TableCell>
-              </TableRowStyled>
+                </S.TableCell>
+              </S.TableRowStyled>
             ))}
-          </TableBody>
-        </Table>
-      </TableWrapper>
+          </S.TableBody>
+        </S.Table>
+      </S.TableWrapper>
     </Card>
   )
 }

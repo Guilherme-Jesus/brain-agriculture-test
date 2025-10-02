@@ -1,5 +1,5 @@
 import { SearchCodeIcon } from 'lucide-react'
-import { SearchIcon, SearchInput, SearchWrapper } from './search-bar.styles'
+import * as S from './search-bar.styles'
 interface SearchBarProps {
   placeholder?: string
   value?: string
@@ -12,16 +12,16 @@ export default function SearchBar({
   onChange,
 }: SearchBarProps) {
   return (
-    <SearchWrapper>
-      <SearchIcon>
+    <S.SearchWrapper>
+      <S.SearchIcon>
         <SearchCodeIcon size={14} />
-      </SearchIcon>
-      <SearchInput
+      </S.SearchIcon>
+      <S.SearchInput
         type="text"
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
       />
-    </SearchWrapper>
+    </S.SearchWrapper>
   )
 }

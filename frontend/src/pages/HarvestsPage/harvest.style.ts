@@ -7,21 +7,18 @@ const PageHeader = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing.xl};
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing.md};
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: stretch;
-  }
 `
 
 const FormWrapper = styled.form`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.lg};
-
-  @media (max-width: 768px) {
-    gap: ${({ theme }) => theme.spacing.md};
-  }
 `
 
-export { FormWrapper, PageHeader }
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.sm};
+  justify-content: flex-end;
+`
+
+export { ButtonGroup, FormWrapper, PageHeader }

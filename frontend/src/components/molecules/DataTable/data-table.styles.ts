@@ -1,71 +1,86 @@
 import styled from 'styled-components'
 
-const TableWrapper = styled.div`
+export const TableWrapper = styled.div`
   width: 100%;
   overflow-x: auto;
-  background-color: ${({ theme }) => theme.colors.surface};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
   border: 1px solid ${({ theme }) => theme.colors.border};
+  background: ${({ theme }) => theme.colors.background};
+
+  @media (max-width: 768px) {
+    border-radius: ${({ theme }) => theme.borderRadius.sm};
+  }
 `
 
-const Table = styled.table`
+export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
+  min-width: 600px;
+
+  @media (max-width: 768px) {
+    min-width: 100%;
+    font-size: 0.875rem;
+  }
 `
 
-const Thead = styled.thead`
-  background-color: ${({ theme }) => theme.colors.muted};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+export const Thead = styled.thead`
+  background: ${({ theme }) => theme.colors.muted};
+  border-bottom: 2px solid ${({ theme }) => theme.colors.border};
 `
 
-const Th = styled.th`
+export const Th = styled.th`
   padding: ${({ theme }) => theme.spacing.md};
   text-align: left;
-  font-size: ${({ theme }) => theme.fontSize.sm};
-  font-weight: ${({ theme }) => theme.fontWeight.semibold};
-  color: ${({ theme }) => theme.colors.text};
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.text.primary};
+  white-space: nowrap;
+
+  @media (max-width: 768px) {
+    padding: ${({ theme }) => theme.spacing.sm};
+  }
 `
 
-const Tbody = styled.tbody``
+export const Tbody = styled.tbody``
 
-const Tr = styled.tr`
+export const Tr = styled.tr`
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.muted};
+  }
 
   &:last-child {
     border-bottom: none;
   }
+`
 
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.muted};
+export const Td = styled.td`
+  padding: ${({ theme }) => theme.spacing.md};
+  color: ${({ theme }) => theme.colors.text.primary};
+
+  @media (max-width: 768px) {
+    padding: ${({ theme }) => theme.spacing.sm};
   }
 `
 
-const Td = styled.td`
+export const ActionsCell = styled.td`
   padding: ${({ theme }) => theme.spacing.md};
-  font-size: ${({ theme }) => theme.fontSize.sm};
-  color: ${({ theme }) => theme.colors.text};
-`
-
-const ActionsCell = styled(Td)`
+  text-align: right;
   display: flex;
   gap: ${({ theme }) => theme.spacing.sm};
   justify-content: flex-end;
+
+  @media (max-width: 768px) {
+    padding: ${({ theme }) => theme.spacing.sm};
+    flex-direction: column;
+    align-items: stretch;
+  }
 `
 
-const EmptyState = styled.div`
+export const EmptyState = styled.div`
   padding: ${({ theme }) => theme.spacing.xl};
   text-align: center;
   color: ${({ theme }) => theme.colors.text.secondary};
+  font-size: 1rem;
 `
-
-export {
-  ActionsCell,
-  EmptyState,
-  Table,
-  TableWrapper,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-}

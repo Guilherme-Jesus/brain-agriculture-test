@@ -1,4 +1,4 @@
-import { StyledText } from './text.styles'
+import * as S from './text.styles'
 
 interface TextProps {
   variant?: 'h1' | 'h2' | 'h3' | 'body' | 'caption'
@@ -16,13 +16,13 @@ export default function Text({
   style,
 }: TextProps) {
   return (
-    <StyledText
+    <S.StyledText
       $variant={variant}
       $color={color}
       $weight={weight}
       style={style}
     >
       {children}
-    </StyledText>
+    </S.StyledText>
   )
 }

@@ -1,9 +1,9 @@
-import { Button } from '@/components/atoms/Button'
+import Button from '@/components/atoms/Button'
 import Input from '@/components/atoms/Input'
-import Select from '@/components/atoms/Select'
+import { Select } from '@/components/atoms/Select'
 import { useGetAllCulturesQuery } from '@/store/api/cultures-api'
 import { useState } from 'react'
-import { ButtonGroup, Form } from './culture-form.styles'
+import * as S from './culture-form.styles'
 
 interface CulturaFormProps {
   onSubmit: (data: { nome: string; safraId: string }) => void
@@ -42,7 +42,7 @@ export default function CulturaForm({ onSubmit, onCancel }: CulturaFormProps) {
   }
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <S.Form onSubmit={handleSubmit}>
       <Select
         label="Cultura"
         options={cultures}
@@ -57,12 +57,12 @@ export default function CulturaForm({ onSubmit, onCancel }: CulturaFormProps) {
         onChange={(e) => setSafraId(e.target.value)}
         error={errors.safraId}
       />
-      <ButtonGroup>
+      <S.ButtonGroup>
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancelar
         </Button>
         <Button type="submit">Salvar</Button>
-      </ButtonGroup>
-    </Form>
+      </S.ButtonGroup>
+    </S.Form>
   )
 }

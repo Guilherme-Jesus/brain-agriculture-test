@@ -1,25 +1,7 @@
 import Text from '@/components/atoms/Text'
-import {
-  BarChart,
-  Building,
-  Calendar,
-  LayoutDashboard,
-  Leaf,
-  Users,
-} from 'lucide-react'
+import { Building, Calendar, LayoutDashboard, Leaf, Users } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
-import {
-  Logo,
-  LogoIcon,
-  LogoText,
-  Nav,
-  NavIcon,
-  NavItem,
-  NavLabel,
-  SidebarWrapper,
-  ToggleButton,
-} from './sidebar.styles'
-
+import * as S from './sidebar.styles'
 interface SidebarProps {
   isCollapsed?: boolean
   isOpen?: boolean
@@ -50,12 +32,12 @@ const menuItems = [
   {
     icon: <Calendar />,
     label: 'Safras',
-    path: '/seasons',
+    path: '/harvests',
   },
   {
-    icon: <BarChart />,
-    label: 'Relatórios',
-    path: '/reports',
+    icon: <Leaf />,
+    label: 'Culturas Plantadas',
+    path: '/planted-crops',
   },
 ]
 
@@ -65,18 +47,18 @@ export default function Sidebar({
   onToggle,
 }: SidebarProps) {
   return (
-    <SidebarWrapper $isOpen={isOpen} $isCollapsed={isCollapsed}>
-      <Logo $isCollapsed={isCollapsed}>
-        <LogoIcon>
+    <S.SidebarWrapper $isOpen={isOpen} $isCollapsed={isCollapsed}>
+      <S.Logo $isCollapsed={isCollapsed}>
+        <S.LogoIcon>
           <Leaf />
-        </LogoIcon>
-        <LogoText $isCollapsed={isCollapsed}>
+        </S.LogoIcon>
+        <S.LogoText $isCollapsed={isCollapsed}>
           <Text variant="h3" weight="semibold">
-            AgroManager
+            Brain Agriculture
           </Text>
-        </LogoText>
-      </Logo>
-      <Nav>
+        </S.LogoText>
+      </S.Logo>
+      <S.Nav>
         {menuItems.map((item, index) => (
           <NavLink
             key={index}
@@ -84,17 +66,17 @@ export default function Sidebar({
             style={{ textDecoration: 'none' }}
           >
             {({ isActive }) => (
-              <NavItem $active={isActive} $isCollapsed={isCollapsed}>
-                <NavIcon>{item.icon}</NavIcon>
-                <NavLabel $isCollapsed={isCollapsed}>{item.label}</NavLabel>
-              </NavItem>
+              <S.NavItem $active={isActive} $isCollapsed={isCollapsed}>
+                <S.NavIcon>{item.icon}</S.NavIcon>
+                <S.NavLabel $isCollapsed={isCollapsed}>{item.label}</S.NavLabel>
+              </S.NavItem>
             )}
           </NavLink>
         ))}
-      </Nav>
-      <ToggleButton onClick={onToggle} $isCollapsed={isCollapsed}>
+      </S.Nav>
+      <S.ToggleButton onClick={onToggle} $isCollapsed={isCollapsed}>
         {isCollapsed ? '→' : '←'}
-      </ToggleButton>
-    </SidebarWrapper>
+      </S.ToggleButton>
+    </S.SidebarWrapper>
   )
 }

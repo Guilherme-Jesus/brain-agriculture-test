@@ -1,29 +1,40 @@
-import { ErrorText, Label, SelectWrapper, StyledSelect } from './select.styles'
+import { forwardRef } from 'react'
+import * as S from './select.styles'
+
+interface SelectOption {
+  value: string
+  label: string
+}
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string
   error?: string
-  options: { value: string; label: string }[]
+  options?: SelectOption[]
 }
 
-export default function Select({
-  label,
-  error,
-  options,
-  ...props
-}: SelectProps) {
-  return (
-    <SelectWrapper>
-      {label && <Label>{label}</Label>}
-      <StyledSelect $hasError={!!error} {...props}>
-        <option value="">Selecione...</option>
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </StyledSelect>
-      {error && <ErrorText>{error}</ErrorText>}
-    </SelectWrapper>
-  )
-}
+export const Select = forwardRef<HTMLSelectElement, SelectProps>(
+  ({ label, error, options, children, ...props }, ref) => {
+    return (
+      <S.SelectWrapper>
+        {label && <S.Label>{label}</S.Label>}
+        <S.StyledSelect ref={ref} $hasError={!!error} {...props}>
+          {options ? (
+            <>
+              <option value="">Selecione...</option>
+              {options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </>
+          ) : (
+            children
+          )}
+        </S.StyledSelect>
+        {error && <S.ErrorText>{error}</S.ErrorText>}
+      </S.SelectWrapper>
+    )
+  }
+)
+
+Select.displayName = 'Select'

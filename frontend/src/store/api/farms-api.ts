@@ -26,6 +26,7 @@ export const farmsApiSlice = apiSlice.injectEndpoints({
           producerId: body.producerId,
         },
       }),
+      invalidatesTags: ['Farm', 'Dashboard'],
     }),
     updateFarm: builder.mutation<FarmsResponse, UpdateFarmDto>({
       query: (body) => ({
@@ -40,12 +41,14 @@ export const farmsApiSlice = apiSlice.injectEndpoints({
           vegetationArea: body.vegetationArea,
         },
       }),
+      invalidatesTags: ['Farm', 'Dashboard'],
     }),
     deleteFarm: builder.mutation<void, string>({
       query: (id) => ({
         url: `/farms/${id}`,
         method: 'DELETE',
       }),
+      invalidatesTags: ['Farm', 'Dashboard'],
     }),
   }),
 })

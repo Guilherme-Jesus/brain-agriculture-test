@@ -25,6 +25,7 @@ export const producersApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
+      invalidatesTags: ['Producer'],
     }),
     updateProducer: builder.mutation<ProducersResponse, UpdateProducerDto>({
       query: (body) => ({
@@ -32,12 +33,14 @@ export const producersApiSlice = apiSlice.injectEndpoints({
         method: 'PATCH',
         body,
       }),
+      invalidatesTags: ['Producer'],
     }),
     deleteProducer: builder.mutation<void, string>({
       query: (id) => ({
         url: `/producers/${id}`,
         method: 'DELETE',
       }),
+      invalidatesTags: ['Producer'],
     }),
   }),
 })

@@ -1,17 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button } from '@/components/atoms/Button'
-import type React from 'react'
-import {
-  ActionsCell,
-  EmptyState,
-  Table,
-  TableWrapper,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from './data-table.styles'
+import Button from '@/components/atoms/Button'
+import * as S from './data-table.styles'
 
 interface Column<T> {
   key: string
@@ -34,37 +23,37 @@ export function DataTable<T extends { id: string }>({
 }: DataTableProps<T>) {
   if (data.length === 0) {
     return (
-      <TableWrapper>
-        <EmptyState>Nenhum registro encontrado</EmptyState>
-      </TableWrapper>
+      <S.TableWrapper>
+        <S.EmptyState>Nenhum registro encontrado</S.EmptyState>
+      </S.TableWrapper>
     )
   }
 
   return (
-    <TableWrapper>
-      <Table>
-        <Thead>
+    <S.TableWrapper>
+      <S.Table>
+        <S.Thead>
           <tr>
             {columns.map((column) => (
-              <Th key={column.key}>{column.label}</Th>
+              <S.Th key={column.key}>{column.label}</S.Th>
             ))}
             {(onEdit || onDelete) && (
-              <Th style={{ textAlign: 'right' }}>Ações</Th>
+              <S.Th style={{ textAlign: 'right' }}>Ações</S.Th>
             )}
           </tr>
-        </Thead>
-        <Tbody>
+        </S.Thead>
+        <S.Tbody>
           {data.map((item) => (
-            <Tr key={item.id}>
+            <S.Tr key={item.id}>
               {columns.map((column) => (
-                <Td key={column.key}>
+                <S.Td key={column.key}>
                   {column.render
                     ? column.render(item)
                     : (item as any)[column.key]}
-                </Td>
+                </S.Td>
               ))}
               {(onEdit || onDelete) && (
-                <ActionsCell>
+                <S.ActionsCell>
                   {onEdit && (
                     <Button
                       variant="outline"
@@ -83,12 +72,12 @@ export function DataTable<T extends { id: string }>({
                       Excluir
                     </Button>
                   )}
-                </ActionsCell>
+                </S.ActionsCell>
               )}
-            </Tr>
+            </S.Tr>
           ))}
-        </Tbody>
-      </Table>
-    </TableWrapper>
+        </S.Tbody>
+      </S.Table>
+    </S.TableWrapper>
   )
 }
