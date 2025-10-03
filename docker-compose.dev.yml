@@ -2,7 +2,7 @@ services:
   # Banco de Dados
   postgres:
     image: postgres:latest
-    container_name: brain-agriculture-db
+    container_name: brain-agriculture-db-dev
     ports:
       - "5433:5432"
     environment:
@@ -10,13 +10,14 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_dev:/var/lib/postgresql/data
 
   # Backend NestJS
   backend:
     container_name: brain-agriculture-backend-dev
     build:
       context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     volumes:
@@ -25,7 +26,8 @@ services:
     depends_on:
       - postgres
     env_file:
-      - ./.env
+      - ./.env.development
+    command: npm run start:dev
 
 volumes:
-  postgres_data:
+  postgres_data_dev:

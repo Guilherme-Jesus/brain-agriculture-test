@@ -1,0 +1,11 @@
+services:
+  # Backend NestJS
+  backend:
+    container_name: brain-agriculture-backend-prod
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./.env.production
