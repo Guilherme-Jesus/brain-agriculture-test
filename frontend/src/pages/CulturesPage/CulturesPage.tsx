@@ -2,7 +2,13 @@ import Button from '@/components/atoms/Button'
 import Input from '@/components/atoms/Input'
 import Modal from '@/components/atoms/Modal'
 import Text from '@/components/atoms/Text'
-import { DataTable } from '@/components/molecules/DataTable'
+import {
+  EntityCard,
+  EntityCardHeader,
+  IconButton,
+} from '@/components/molecules/EntityCard'
+import FormActions from '@/components/molecules/FormActions'
+import { cultureSchema, type CultureFormData } from '@/schemas/culture.schema'
 import {
   useCreateCultureMutation,
   useDeleteCultureMutation,
@@ -10,30 +16,11 @@ import {
   useUpdateCultureMutation,
 } from '@/store/api/cultures-api'
 import type { CulturesResponse } from '@/types/cultures'
-import type React from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Edit, Leaf, Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import styled from 'styled-components'
-
-const PageHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing.md};
-`
-
-const FormWrapper = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.lg};
-`
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing.sm};
-  justify-content: flex-end;
-`
+import { useForm } from 'react-hook-form'
+import * as S from './cultures.styles'
 
 export default function CulturesPage() {
   const { cultures } = useGetAllCulturesQuery(undefined, {
@@ -50,89 +37,112 @@ export default function CulturesPage() {
   const [editingCulture, setEditingCulture] = useState<CulturesResponse | null>(
     null
   )
-  const [formData, setFormData] = useState({ name: '' })
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (editingCulture) {
-      updateCulture({
-        id: editingCulture.id,
-        name: formData.name,
-      }).unwrap()
-    } else {
-      createCulture({
-        name: formData.name,
-      }).unwrap()
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<CultureFormData>({
+    resolver: zodResolver(cultureSchema),
+    mode: 'onChange',
+  })
+
+  const onSubmit = async (data: CultureFormData) => {
+    try {
+      if (editingCulture) {
+        await updateCulture({
+          id: editingCulture.id,
+          name: data.name,
+        }).unwrap()
+      } else {
+        await createCulture({
+          name: data.name,
+        }).unwrap()
+      }
+      handleCloseModal()
+    } catch (error) {
+      console.error('Erro ao salvar cultura:', error)
     }
+  }
+
+  const handleCloseModal = () => {
     setIsModalOpen(false)
     setEditingCulture(null)
-    setFormData({ name: '' })
+    reset({ name: '' })
   }
 
   const handleEdit = (culture: CulturesResponse) => {
     setEditingCulture(culture)
-    setFormData({ name: culture.name })
+    reset({ name: culture.name })
     setIsModalOpen(true)
   }
 
-  const handleDelete = (culture: CulturesResponse) => {
-    deleteCulture(culture.id).unwrap()
+  const handleDelete = async (culture: CulturesResponse) => {
+    if (confirm(`Deseja realmente excluir a cultura "${culture.name}"?`)) {
+      try {
+        await deleteCulture(culture.id).unwrap()
+      } catch (error) {
+        console.error('Erro ao excluir cultura:', error)
+      }
+    }
   }
-
-  const columns = [{ key: 'name', label: 'Nome da Cultura' }]
 
   return (
     <>
-      <PageHeader>
+      <S.PageHeader>
         <Text variant="h1" weight="bold">
           Culturas
         </Text>
         <Button variant="primary" onClick={() => setIsModalOpen(true)}>
           + Nova Cultura
         </Button>
-      </PageHeader>
+      </S.PageHeader>
 
-      <DataTable
-        data={cultures}
-        columns={columns}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      <S.CardsGrid>
+        {cultures.map((culture) => (
+          <EntityCard key={culture.id}>
+            <EntityCardHeader
+              icon={<Leaf size={20} />}
+              title={
+                <Text variant="h3" weight="bold">
+                  {culture.name}
+                </Text>
+              }
+            >
+              <IconButton onClick={() => handleEdit(culture)} title="Editar">
+                <Edit size={16} />
+              </IconButton>
+              <IconButton
+                onClick={() => handleDelete(culture)}
+                title="Excluir"
+                variant="danger"
+              >
+                <Trash2 size={16} />
+              </IconButton>
+            </EntityCardHeader>
+          </EntityCard>
+        ))}
+      </S.CardsGrid>
 
       <Modal
         isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false)
-          setEditingCulture(null)
-          setFormData({ name: '' })
-        }}
+        onClose={handleCloseModal}
         title={editingCulture ? 'Editar Cultura' : 'Nova Cultura'}
       >
-        <FormWrapper onSubmit={handleSubmit}>
+        <S.FormWrapper onSubmit={handleSubmit(onSubmit)}>
           <Input
             label="Nome da Cultura"
-            value={formData.name}
-            onChange={(e) => setFormData({ name: e.target.value })}
             placeholder="Ex: Soja, Milho, Café"
-            required
+            {...register('name')}
+            error={errors.name?.message}
           />
-          <ButtonGroup>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setIsModalOpen(false)
-                setEditingCulture(null)
-                setFormData({ name: '' })
-              }}
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" variant="primary">
-              {editingCulture ? 'Salvar' : 'Criar'}
-            </Button>
-          </ButtonGroup>
-        </FormWrapper>
+          <FormActions
+            onCancel={handleCloseModal}
+            isLoading={isSubmitting}
+            submitText={editingCulture ? 'Salvar' : 'Criar'}
+          />
+        </S.FormWrapper>
       </Modal>
     </>
   )

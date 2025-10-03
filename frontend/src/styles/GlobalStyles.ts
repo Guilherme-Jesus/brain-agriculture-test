@@ -21,15 +21,11 @@ export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
     color: ${({ theme }) => theme.colors.text.primary};
     font-size: ${({ theme }) => theme.fontSize.md};
     line-height: 1.5;
-    margin: 0;
-    padding: 0;
   }
 
   #root {
     width: 100%;
     min-height: 100vh;
-    margin: 0;
-    padding: 0;
   }
 
   button {
@@ -46,5 +42,29 @@ export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
 
   ul, ol {
     list-style: none;
+  }
+
+   * {
+    &::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: ${({ theme }) => theme.colors.muted};
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: ${({ theme }) => theme.colors.primary};
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: ${({ theme }) => theme.colors.primaryDark};
+    }
+
+    scrollbar-width: thin;
+    scrollbar-color: ${({ theme }) => theme.colors.primary} ${({ theme }) => theme.colors.muted};
   }
 `

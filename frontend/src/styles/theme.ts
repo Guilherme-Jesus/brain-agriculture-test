@@ -8,6 +8,7 @@ export const theme = {
     success: '#22c55e',
     warning: '#eab308',
     error: '#EF4444',
+    danger: '#F87171',
     background: '#ffffff',
     muted: '#f4f4f5',
     surface: '#ffffff',
@@ -18,6 +19,7 @@ export const theme = {
     },
     border: '#e4e4e7',
     shadow: 'rgba(0, 0, 0, 0.05)',
+    modalOverlay: 'rgba(0, 0, 0, 0.4)',
   },
   spacing: {
     xs: '0.25rem', // 4px

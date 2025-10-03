@@ -1,7 +1,17 @@
 import PieChart from '@/components/molecules/PieChart'
+import type { DashboardResponse } from '@/types/dashboard'
+
+interface FarmsByCultureChartProps {
+  data?: DashboardResponse['farmsByCulture']
+  title: string
+}
 
 interface FarmsByStateChartProps {
-  data?: { state: string; count: number }[]
+  data?: DashboardResponse['farmsByState']
+  title: string
+}
+interface LandUseChartProps {
+  data?: DashboardResponse['landUse']
   title: string
 }
 
@@ -14,11 +24,6 @@ export function FarmsByStateChart({ data, title }: FarmsByStateChartProps) {
   return <PieChart data={chartData} title={title} />
 }
 
-interface FarmsByCultureChartProps {
-  data?: { culture: string; count: number }[]
-  title: string
-}
-
 export function FarmsByCultureChart({ data, title }: FarmsByCultureChartProps) {
   const chartData = data?.map((item) => ({
     name: item.culture,
@@ -26,11 +31,6 @@ export function FarmsByCultureChart({ data, title }: FarmsByCultureChartProps) {
   })) || [{ name: 'Sem dados', value: 1 }]
 
   return <PieChart data={chartData} title={title} />
-}
-
-interface LandUseChartProps {
-  data?: { totalArableArea: number; totalVegetationArea: number }
-  title: string
 }
 
 export function LandUseChart({ data, title }: LandUseChartProps) {

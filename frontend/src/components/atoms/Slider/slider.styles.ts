@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
   width: 100%;
 `
 
@@ -15,13 +15,13 @@ export const LabelContainer = styled.div`
 
 export const Label = styled.label`
   font-size: ${({ theme }) => theme.fontSize.sm};
-  font-weight: 500;
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
   color: ${({ theme }) => theme.colors.text.primary};
 `
 
 export const ValueDisplay = styled.span`
   font-size: ${({ theme }) => theme.fontSize.sm};
-  font-weight: 600;
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
   color: ${({ theme }) => theme.colors.background};
   padding: 0.25rem 0.75rem;
   background: ${({ theme }) => theme.colors.primary};
@@ -45,10 +45,15 @@ export const SliderTrack = styled.div`
   pointer-events: none;
 `
 
-export const SliderFill = styled.div<{ $percentage: number }>`
+export const SliderFill = styled.div.attrs<{ $percentage: number }>(
+  (props) => ({
+    style: {
+      width: `${props.$percentage}%`,
+    },
+  })
+)<{ $percentage: number }>`
   position: absolute;
   height: 100%;
-  width: ${({ $percentage }) => $percentage}%;
   background: ${({ theme }) => theme.colors.primary};
   border-radius: 0.25rem;
   transition: width 0.1s ease;

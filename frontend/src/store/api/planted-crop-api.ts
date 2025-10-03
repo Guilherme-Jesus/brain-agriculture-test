@@ -3,6 +3,7 @@ import type {
   PlantedCropResponse,
   UpdatePlantedCropDto,
 } from '@/types/planted-crop'
+import { capitalizeFirstLetter } from '@/utils/validators'
 import { apiSlice } from './api'
 
 export const plantedCropApiSlice = apiSlice.injectEndpoints({
@@ -10,6 +11,16 @@ export const plantedCropApiSlice = apiSlice.injectEndpoints({
     getAllPlantedCrops: builder.query<PlantedCropResponse[], void>({
       query: () => '/planted-crops',
       providesTags: ['PlantedCrop'],
+      transformResponse: (response: PlantedCropResponse[]) => {
+        if (response.length === 0) return []
+        return response.map((plantedCrop) => ({
+          ...plantedCrop,
+          culture: {
+            ...plantedCrop.culture,
+            name: capitalizeFirstLetter(plantedCrop.culture.name),
+          },
+        }))
+      },
     }),
     getPlantedCropById: builder.query<PlantedCropResponse, string>({
       query: (id) => `/planted-crops/${id}`,

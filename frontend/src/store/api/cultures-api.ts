@@ -3,21 +3,21 @@ import type {
   CulturesResponse,
   UpdateCultureDto,
 } from '@/types/cultures'
+import { capitalizeFirstLetter } from '@/utils/validators'
 import { apiSlice } from './api'
 
 export const culturesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllCultures: builder.query<CulturesResponse[], void>({
       query: () => '/cultures',
+      providesTags: ['Culture'],
       transformResponse: (response: CulturesResponse[]) => {
         if (response.length === 0) return []
-        const cultures = response.map((culture) => ({
+        return response.map((culture) => ({
           ...culture,
-          name: culture.name.charAt(0).toUpperCase() + culture.name.slice(1),
+          name: capitalizeFirstLetter(culture.name),
         }))
-        return cultures
       },
-      providesTags: ['Culture'],
     }),
     getCultureById: builder.query<CulturesResponse, string>({
       query: (id) => `/cultures/${id}`,

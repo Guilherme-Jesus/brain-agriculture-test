@@ -9,7 +9,7 @@ const InputWrapper = styled.div`
 
 const Label = styled.label`
   font-size: ${({ theme }) => theme.fontSize.sm};
-  font-weight: 500;
+  font-weight: 600;
   color: ${({ theme }) => theme.colors.text.primary};
 `
 

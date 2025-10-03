@@ -27,8 +27,10 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
     },
     ref
   ) => {
-    const currentValue = value || min
-    const percentage = ((Number(currentValue) - min) / (max - min)) * 100
+    const currentValue = value !== undefined && value !== null ? value : min
+    const range = max - min
+    const percentage =
+      range > 0 ? ((Number(currentValue) - min) / range) * 100 : 0
 
     return (
       <S.Container>

@@ -13,6 +13,8 @@ const StyledText = styled.p<{
         return theme.fontSize.xxl
       case 'h3':
         return theme.fontSize.xl
+      case 'h4':
+        return theme.fontSize.lg
       case 'caption':
         return theme.fontSize.sm
       default:

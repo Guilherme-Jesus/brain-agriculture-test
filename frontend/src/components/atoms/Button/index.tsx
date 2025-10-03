@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
   size?: 'sm' | 'md' | 'lg'
   children: React.ReactNode
   fullWidth?: boolean
@@ -63,6 +63,14 @@ const StyledButton = styled.button<{
           color: ${theme.colors.text.primary};
           &:hover {
             background-color: ${theme.colors.muted};
+          }
+        `
+      case 'danger':
+        return `
+          background-color: ${theme.colors.error};
+          color: white;
+          &:hover {
+            background-color: ${theme.colors.error};
           }
         `
       default:

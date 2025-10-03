@@ -8,15 +8,15 @@ const SelectWrapper = styled.div`
 `
 
 const Label = styled.label`
-  font-size: (${({ theme }) => theme.fontSize.sm});
-  font-weight: (${({ theme }) => theme.fontWeight.medium});
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
   color: ${({ theme }) => theme.colors.text.primary};
 `
 
 const StyledSelect = styled.select<{ $hasError?: boolean }>`
   width: 100%;
   padding: 0.5rem 0.75rem;
-  font-size: (${({ theme }) => theme.fontSize.sm});
+  font-size: ${({ theme }) => theme.fontSize.sm};
   border: 1px solid
     ${({ theme, $hasError }) =>
       $hasError ? theme.colors.error : theme.colors.border};
@@ -39,7 +39,7 @@ const StyledSelect = styled.select<{ $hasError?: boolean }>`
 `
 
 const ErrorText = styled.span`
-  font-size: (${({ theme }) => theme.fontSize.xs});
+  font-size: ${({ theme }) => theme.fontSize.xs};
   color: ${({ theme }) => theme.colors.error};
 `
 export { ErrorText, Label, SelectWrapper, StyledSelect }

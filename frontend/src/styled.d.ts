@@ -10,6 +10,7 @@ declare module 'styled-components' {
       accent: string
       success: string
       warning: string
+      danger: string
       error: string
       background: string
       muted: string
@@ -21,6 +22,7 @@ declare module 'styled-components' {
       }
       border: string
       shadow: string
+      modalOverlay: string
     }
     spacing: {
       xs: string

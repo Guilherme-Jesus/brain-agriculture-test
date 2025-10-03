@@ -1,3 +1,7 @@
+'use client'
+
+import type React from 'react'
+
 import { useEffect } from 'react'
 import {
   CloseButton,
@@ -13,6 +17,8 @@ interface ModalProps {
   onClose: () => void
   title: string
   children: React.ReactNode
+  maxWidth?: string
+  maxHeight?: string
 }
 
 export default function Modal({
@@ -20,6 +26,8 @@ export default function Modal({
   onClose,
   title,
   children,
+  maxWidth = '500px',
+  maxHeight = '90vh',
 }: ModalProps) {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -40,7 +48,7 @@ export default function Modal({
 
   return (
     <ModalOverlay $isOpen={isOpen} onClick={handleOverlayClick}>
-      <ModalContent>
+      <ModalContent $maxWidth={maxWidth} $maxHeight={maxHeight}>
         <ModalHeader>
           <ModalTitle>{title}</ModalTitle>
           <CloseButton onClick={onClose}>×</CloseButton>

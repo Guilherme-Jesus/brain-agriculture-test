@@ -10,18 +10,22 @@ const ButtonGroup = styled.div`
 
 interface FormActionsProps {
   onCancel: () => void
+  onSubmit?: () => void | Promise<void>
   isLoading?: boolean
   isDisabled?: boolean
   cancelText?: string
   submitText?: string
+  submitVariant?: 'primary' | 'danger' | 'outline'
 }
 
 export default function FormActions({
   onCancel,
+  onSubmit,
   isLoading = false,
   isDisabled = false,
   cancelText = 'Cancelar',
   submitText = 'Salvar',
+  submitVariant = 'primary',
 }: FormActionsProps) {
   return (
     <ButtonGroup>
@@ -33,7 +37,12 @@ export default function FormActions({
       >
         {cancelText}
       </Button>
-      <Button type="submit" disabled={isDisabled || isLoading}>
+      <Button
+        type={onSubmit ? 'button' : 'submit'}
+        variant={submitVariant}
+        onClick={onSubmit}
+        disabled={isDisabled || isLoading}
+      >
         {isLoading ? 'Salvando...' : submitText}
       </Button>
     </ButtonGroup>
