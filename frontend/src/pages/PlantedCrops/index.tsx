@@ -1,18 +1,17 @@
-import Button from '@/components/atoms/Button'
 import Modal from '@/components/atoms/Modal'
-import Text from '@/components/atoms/Text'
 import ConfirmDialog from '@/components/molecules/ConfirmDialog'
+import PageHeader from '@/components/organisms/PageHeader'
 import {
   useDeletePlantedCropMutation,
   useGetAllPlantedCropsQuery,
 } from '@/store/api/planted-crop-api'
 import type { PlantedCropResponse } from '@/types/planted-crop'
+import { Sprout } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { PlantedCropForm } from './PlantedCropForm'
 import { PlantedCropsList } from './PlantedCropsList'
-import * as S from './planted-crops.styles'
 
 export default function PlantedCropsPage() {
   const navigate = useNavigate()
@@ -51,14 +50,13 @@ export default function PlantedCropsPage() {
 
   return (
     <>
-      <S.PageHeader>
-        <Text variant="h1" weight="bold">
-          Culturas Plantadas
-        </Text>
-        <Button variant="primary" onClick={handleCreate}>
-          + Novo Plantio
-        </Button>
-      </S.PageHeader>
+      <PageHeader
+        icon={Sprout}
+        title="Culturas Plantadas"
+        subtitle="Gerenciamento de plantios e culturas"
+        actionLabel="+ Novo Plantio"
+        onActionClick={handleCreate}
+      />
 
       {isLoading ? (
         <p>Carregando plantios...</p>

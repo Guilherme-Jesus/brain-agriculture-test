@@ -1,18 +1,17 @@
-import Button from '@/components/atoms/Button'
 import Modal from '@/components/atoms/Modal'
-import Text from '@/components/atoms/Text'
 import ConfirmDialog from '@/components/molecules/ConfirmDialog'
+import PageHeader from '@/components/organisms/PageHeader'
 import {
   useDeleteHarvestMutation,
   useGetAllHarvestsQuery,
 } from '@/store/api/harvests-api'
 import type { HarvestsResponse } from '@/types/harvests'
+import { Calendar } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { HarvestForm } from './HarvestForm'
 import { HarvestsList } from './HarvestsList'
-import * as S from './harvests.styles'
 
 export default function HarvestsPage() {
   const navigate = useNavigate()
@@ -49,14 +48,13 @@ export default function HarvestsPage() {
 
   return (
     <>
-      <S.PageHeader>
-        <Text variant="h1" weight="bold">
-          Safras
-        </Text>
-        <Button variant="primary" onClick={handleCreate}>
-          + Nova Safra
-        </Button>
-      </S.PageHeader>
+      <PageHeader
+        icon={Calendar}
+        title="Safras"
+        subtitle="Gerenciamento de safras agrícolas"
+        actionLabel="+ Nova Safra"
+        onActionClick={handleCreate}
+      />
 
       {isLoading ? (
         <p>Carregando safras...</p>

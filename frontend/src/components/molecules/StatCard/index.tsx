@@ -50,7 +50,7 @@ export default function StatCard({ title, value, icon, trend }: StatCardData) {
             <S.StatValue>{value}</S.StatValue>
           </S.StatInfo>
           <S.IconWrapper>
-            <IconComponent size={24} />
+            <IconComponent size={24} data-testid={icon} />
           </S.IconWrapper>
         </S.StatHeader>
         {trend && (

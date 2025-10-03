@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import Header from '../../organisms/Header'
 import Sidebar from '../../organisms/Sidebar'
-import * as S from './styles'
+import * as S from './layout.styles'
 
 export default function Layout() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)

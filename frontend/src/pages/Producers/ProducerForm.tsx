@@ -1,5 +1,6 @@
 import Input from '@/components/atoms/Input'
 import FormActions from '@/components/molecules/FormActions'
+import FormWrapper from '@/components/molecules/FormWrapper'
 import {
   producerSchema,
   type ProducerFormData,
@@ -14,7 +15,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
-import * as S from './producers.styles'
 
 interface ProducerFormProps {
   id?: string
@@ -81,7 +81,7 @@ export function ProducerForm({ id, onSuccess, onCancel }: ProducerFormProps) {
   const isLoading = isCreating || isUpdating
 
   return (
-    <S.FormWrapper key={id || 'new'} onSubmit={handleSubmit(onSubmit)}>
+    <FormWrapper key={id || 'new'} onSubmit={handleSubmit(onSubmit)}>
       <Controller
         name="document"
         control={control}
@@ -129,6 +129,6 @@ export function ProducerForm({ id, onSuccess, onCancel }: ProducerFormProps) {
         isDisabled={!isValid}
         submitText={editingProducer ? 'Salvar' : 'Criar'}
       />
-    </S.FormWrapper>
+    </FormWrapper>
   )
 }

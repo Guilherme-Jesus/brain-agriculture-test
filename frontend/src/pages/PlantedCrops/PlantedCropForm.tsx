@@ -2,6 +2,7 @@ import { Select } from '@/components/atoms/Select'
 import { Slider } from '@/components/atoms/Slider/Slider'
 import Text from '@/components/atoms/Text'
 import FormActions from '@/components/molecules/FormActions'
+import FormWrapper from '@/components/molecules/FormWrapper'
 import {
   plantedCropSchema,
   type PlantedCropFormData,
@@ -108,7 +109,7 @@ export function PlantedCropForm({
   }
 
   return (
-    <S.FormWrapper key={id || 'new'} onSubmit={handleSubmit(onSubmit)}>
+    <FormWrapper key={id || 'new'} onSubmit={handleSubmit(onSubmit)}>
       <Select
         label="Fazenda"
         {...register('farmId')}
@@ -215,6 +216,6 @@ export function PlantedCropForm({
         isLoading={isSubmitting}
         submitText={editingCrop ? 'Salvar Alterações' : 'Cadastrar Plantio'}
       />
-    </S.FormWrapper>
+    </FormWrapper>
   )
 }

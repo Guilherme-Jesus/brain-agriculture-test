@@ -3,6 +3,7 @@ import { Select } from '@/components/atoms/Select'
 import { Slider } from '@/components/atoms/Slider/Slider'
 import Text from '@/components/atoms/Text'
 import FormActions from '@/components/molecules/FormActions'
+import FormWrapper from '@/components/molecules/FormWrapper'
 import { farmFormSchema, type FarmFormData } from '@/schemas/farm.schema'
 import {
   useCreateFarmMutation,
@@ -14,6 +15,7 @@ import {
   useUpdatePlantedCropMutation,
 } from '@/store/api/planted-crop-api'
 import { useGetAllProducersQuery } from '@/store/api/producers-api'
+import type { UpdateFarmDto } from '@/types/farms'
 import { BRAZILIAN_STATES } from '@/utils/constants'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useMemo, useState } from 'react'
@@ -95,7 +97,6 @@ export function FarmForm({ id, onSuccess, onCancel }: FarmFormProps) {
     }
   }, [editingFarm, allPlantedCrops, reset])
 
-  // Ajusta áreas plantadas automaticamente quando arableArea diminui
   useEffect(() => {
     if (!editingFarm || farmPlantedCrops.length === 0) return
 
@@ -126,23 +127,51 @@ export function FarmForm({ id, onSuccess, onCancel }: FarmFormProps) {
   const onSubmit = async (data: FarmFormData) => {
     try {
       if (editingFarm) {
-        await updateFarm({
+        const updateData: Partial<UpdateFarmDto> & { id: string } = {
           id: editingFarm.id,
-          totalArea: Number(data.totalArea),
-          arableArea: Number(data.arableArea),
-          vegetationArea: Number(data.vegetationArea),
-        }).unwrap()
+        }
 
-        const updatePromises = Object.entries(plantedCropsAreas).map(
-          ([cropId, newArea]) => {
+        if (data.name !== editingFarm.name) {
+          updateData.name = data.name
+        }
+        if (data.city !== editingFarm.city) {
+          updateData.city = data.city
+        }
+        if (data.state !== editingFarm.state) {
+          updateData.state = data.state
+        }
+        if (Number(data.totalArea) !== Number(editingFarm.totalArea)) {
+          updateData.totalArea = Number(data.totalArea)
+        }
+        if (Number(data.arableArea) !== Number(editingFarm.arableArea)) {
+          updateData.arableArea = Number(data.arableArea)
+        }
+        if (
+          Number(data.vegetationArea) !== Number(editingFarm.vegetationArea)
+        ) {
+          updateData.vegetationArea = Number(data.vegetationArea)
+        }
+
+        if (Object.keys(updateData).length > 1) {
+          await updateFarm(updateData as UpdateFarmDto).unwrap()
+        }
+
+        const updatePromises = Object.entries(plantedCropsAreas)
+          .filter(([cropId, newArea]) => {
+            const originalCrop = farmPlantedCrops.find((c) => c.id === cropId)
+            return originalCrop && Number(originalCrop.plantedArea) !== newArea
+          })
+          .map(([cropId, newArea]) => {
             return updatePlantedCrop({
               id: cropId,
               plantedArea: newArea,
             }).unwrap()
-          }
-        )
+          })
 
-        await Promise.all(updatePromises)
+        if (updatePromises.length > 0) {
+          await Promise.all(updatePromises)
+        }
+
         toast.success('Fazenda atualizada com sucesso!')
       } else {
         await createFarm({
@@ -165,13 +194,12 @@ export function FarmForm({ id, onSuccess, onCancel }: FarmFormProps) {
   const isLoading = isCreating || isUpdating
 
   return (
-    <S.FormWrapper key={id || 'new'} onSubmit={handleSubmit(onSubmit)}>
+    <FormWrapper key={id || 'new'} onSubmit={handleSubmit(onSubmit)}>
       <Input
         label="Nome da Fazenda"
         placeholder="Digite o nome da propriedade"
         {...register('name')}
         error={errors.name?.message}
-        disabled={!!editingFarm}
       />
 
       <Select
@@ -179,7 +207,6 @@ export function FarmForm({ id, onSuccess, onCancel }: FarmFormProps) {
         {...register('producerId')}
         error={errors.producerId?.message}
         options={producers}
-        disabled={!!editingFarm}
       />
 
       <S.Row>
@@ -188,14 +215,12 @@ export function FarmForm({ id, onSuccess, onCancel }: FarmFormProps) {
           placeholder="Digite a cidade"
           {...register('city')}
           error={errors.city?.message}
-          disabled={!!editingFarm}
         />
         <Select
           label="Estado"
           {...register('state')}
           error={errors.state?.message}
           options={BRAZILIAN_STATES}
-          disabled={!!editingFarm}
         />
       </S.Row>
 
@@ -357,6 +382,6 @@ export function FarmForm({ id, onSuccess, onCancel }: FarmFormProps) {
         isDisabled={!isValid}
         submitText={editingFarm ? 'Salvar' : 'Criar'}
       />
-    </S.FormWrapper>
+    </FormWrapper>
   )
 }

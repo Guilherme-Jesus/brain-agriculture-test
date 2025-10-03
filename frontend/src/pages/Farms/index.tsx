@@ -1,18 +1,17 @@
-import Button from '@/components/atoms/Button'
 import Modal from '@/components/atoms/Modal'
-import Text from '@/components/atoms/Text'
 import ConfirmDialog from '@/components/molecules/ConfirmDialog'
+import PageHeader from '@/components/organisms/PageHeader'
 import {
   useDeleteFarmMutation,
   useGetAllFarmsQuery,
 } from '@/store/api/farms-api'
 import type { FarmsResponse } from '@/types/farms'
+import { Building } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { FarmForm } from './FarmForm'
 import { FarmsList } from './FarmsList'
-import * as S from './farms.styles'
 
 export default function FarmsPage() {
   const navigate = useNavigate()
@@ -47,14 +46,13 @@ export default function FarmsPage() {
 
   return (
     <>
-      <S.PageHeader>
-        <Text variant="h1" weight="bold">
-          Fazendas
-        </Text>
-        <Button variant="primary" onClick={handleCreate}>
-          + Nova Fazenda
-        </Button>
-      </S.PageHeader>
+      <PageHeader
+        icon={Building}
+        title="Fazendas"
+        subtitle="Gerenciamento de propriedades rurais"
+        actionLabel="+ Nova Fazenda"
+        onActionClick={handleCreate}
+      />
 
       {isLoading ? (
         <p>Carregando fazendas...</p>

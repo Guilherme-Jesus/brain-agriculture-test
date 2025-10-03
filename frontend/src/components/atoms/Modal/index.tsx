@@ -1,7 +1,3 @@
-'use client'
-
-import type React from 'react'
-
 import { useEffect } from 'react'
 import {
   CloseButton,
@@ -46,12 +42,16 @@ export default function Modal({
     }
   }
 
+  if (!isOpen) return null
+
   return (
     <ModalOverlay $isOpen={isOpen} onClick={handleOverlayClick}>
       <ModalContent $maxWidth={maxWidth} $maxHeight={maxHeight}>
         <ModalHeader>
           <ModalTitle>{title}</ModalTitle>
-          <CloseButton onClick={onClose}>×</CloseButton>
+          <CloseButton onClick={onClose} aria-label="Fechar">
+            ×
+          </CloseButton>
         </ModalHeader>
         <ModalBody>{children}</ModalBody>
       </ModalContent>

@@ -1,19 +1,18 @@
-import Button from '@/components/atoms/Button'
 import Modal from '@/components/atoms/Modal'
-import Text from '@/components/atoms/Text'
 import ConfirmDialog from '@/components/molecules/ConfirmDialog'
+import PageHeader from '@/components/organisms/PageHeader'
 import { useGetAllFarmsQuery } from '@/store/api/farms-api'
 import {
   useDeleteProducerMutation,
   useGetAllProducersQuery,
 } from '@/store/api/producers-api'
 import type { ProducersResponse } from '@/types/producers'
+import { Users } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { ProducerForm } from './ProducerForm'
 import { ProducersList } from './ProducersList'
-import * as S from './producers.styles'
 
 export default function ProducersPage() {
   const navigate = useNavigate()
@@ -82,14 +81,13 @@ export default function ProducersPage() {
 
   return (
     <>
-      <S.PageHeader>
-        <Text variant="h1" weight="bold">
-          Produtores
-        </Text>
-        <Button variant="primary" onClick={handleCreate}>
-          + Novo Produtor
-        </Button>
-      </S.PageHeader>
+      <PageHeader
+        icon={Users}
+        title="Produtores"
+        subtitle="Gerenciamento de produtores rurais"
+        actionLabel="+ Novo Produtor"
+        onActionClick={handleCreate}
+      />
 
       {isLoading ? (
         <p>Carregando produtores...</p>

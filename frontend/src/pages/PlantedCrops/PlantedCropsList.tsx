@@ -7,6 +7,7 @@ import {
   EntityCardHeader,
   IconButton,
 } from '@/components/molecules/EntityCard'
+import CardsGrid from '@/components/templates/CardsGrid'
 import type { PlantedCropResponse } from '@/types/planted-crop'
 import {
   Calendar,
@@ -18,7 +19,6 @@ import {
   Trash2,
   Trees,
 } from 'lucide-react'
-import * as S from './planted-crops.styles'
 
 interface PlantedCropsListProps {
   crops: PlantedCropResponse[]
@@ -32,7 +32,7 @@ export function PlantedCropsList({
   onDelete,
 }: PlantedCropsListProps) {
   return (
-    <S.CardsGrid>
+    <CardsGrid>
       {crops.map((crop) => (
         <EntityCard key={crop.id}>
           <EntityCardHeader
@@ -109,6 +109,6 @@ export function PlantedCropsList({
           </EntityCardContent>
         </EntityCard>
       ))}
-    </S.CardsGrid>
+    </CardsGrid>
   )
 }

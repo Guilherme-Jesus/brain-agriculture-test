@@ -7,6 +7,7 @@ import {
   EntityCardHeader,
   IconButton,
 } from '@/components/molecules/EntityCard'
+import CardsGrid from '@/components/templates/CardsGrid'
 import type { FarmsResponse } from '@/types/farms'
 import {
   Edit,
@@ -17,7 +18,6 @@ import {
   Trees,
   User,
 } from 'lucide-react'
-import * as S from './farms.styles'
 
 interface FarmsListProps {
   farms: FarmsResponse[]
@@ -27,7 +27,7 @@ interface FarmsListProps {
 
 export function FarmsList({ farms, onEdit, onDelete }: FarmsListProps) {
   return (
-    <S.CardsGrid>
+    <CardsGrid>
       {farms.map((farm) => (
         <EntityCard key={farm.id}>
           <EntityCardHeader
@@ -93,6 +93,6 @@ export function FarmsList({ farms, onEdit, onDelete }: FarmsListProps) {
           </EntityCardContent>
         </EntityCard>
       ))}
-    </S.CardsGrid>
+    </CardsGrid>
   )
 }

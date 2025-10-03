@@ -7,6 +7,7 @@ import {
 import type { StatCardData } from '@/components/molecules/StatCard'
 import { StatsGrid } from '@/components/organisms/StatsGrid'
 import { useGetDashboardDataQuery } from '@/store/api/dashboard-api'
+import { LayoutDashboard } from 'lucide-react'
 
 import * as S from './dashboard.styles'
 
@@ -49,14 +50,19 @@ export default function DashboardPage() {
   return (
     <>
       <S.PageHeader>
-        <S.PageTitle>
-          <Text variant="h1" weight="bold">
-            Dashboard Agrícola
-          </Text>
-          <Text color="secondary">
-            Gerencie produtores, fazendas e culturas
-          </Text>
-        </S.PageTitle>
+        <S.PageTitleWrapper>
+          <S.IconWrapper>
+            <LayoutDashboard size={32} />
+          </S.IconWrapper>
+          <S.PageTitle>
+            <Text variant="h1" weight="bold">
+              Dashboard
+            </Text>
+            <Text variant="body" color="secondary">
+              Visão geral das operações agrícolas
+            </Text>
+          </S.PageTitle>
+        </S.PageTitleWrapper>
       </S.PageHeader>
 
       <S.ContentSection>

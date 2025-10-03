@@ -1,5 +1,6 @@
 import Input from '@/components/atoms/Input'
 import FormActions from '@/components/molecules/FormActions'
+import FormWrapper from '@/components/molecules/FormWrapper'
 import { harvestSchema, type HarvestFormData } from '@/schemas/harvest.schema'
 import {
   useCreateHarvestMutation,
@@ -10,7 +11,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
-import * as S from './harvests.styles'
 
 interface HarvestFormProps {
   id?: string
@@ -66,7 +66,7 @@ export function HarvestForm({ id, onSuccess, onCancel }: HarvestFormProps) {
   const isLoading = isCreating || isUpdating
 
   return (
-    <S.FormWrapper key={id || 'new'} onSubmit={handleSubmit(onSubmit)}>
+    <FormWrapper key={id || 'new'} onSubmit={handleSubmit(onSubmit)}>
       <Input
         label="Nome da Safra"
         placeholder="Ex: 2024/2025, Verão 2024"
@@ -78,6 +78,6 @@ export function HarvestForm({ id, onSuccess, onCancel }: HarvestFormProps) {
         isLoading={isLoading}
         submitText={editingHarvest ? 'Salvar' : 'Criar'}
       />
-    </S.FormWrapper>
+    </FormWrapper>
   )
 }

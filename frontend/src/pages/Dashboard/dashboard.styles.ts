@@ -9,6 +9,27 @@ const PageHeader = styled.div`
   gap: ${({ theme }) => theme.spacing.md};
 `
 
+const PageTitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.md};
+`
+
+const IconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: ${({ theme }) => theme.colors.primary}15;
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  color: ${({ theme }) => theme.colors.primary};
+
+  svg {
+    stroke-width: 1.5;
+  }
+`
+
 const PageTitle = styled.div`
   display: flex;
   flex-direction: column;
@@ -34,4 +55,12 @@ const ActionButtons = styled.div`
   flex-wrap: wrap;
 `
 
-export { ActionButtons, ChartsGrid, ContentSection, PageHeader, PageTitle }
+export {
+  ActionButtons,
+  ChartsGrid,
+  ContentSection,
+  IconWrapper,
+  PageHeader,
+  PageTitle,
+  PageTitleWrapper,
+}

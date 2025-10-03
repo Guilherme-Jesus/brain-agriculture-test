@@ -6,6 +6,7 @@ import {
   EntityCardHeader,
   IconButton,
 } from '@/components/molecules/EntityCard'
+import CardsGrid from '@/components/templates/CardsGrid'
 import type { FarmsResponse } from '@/types/farms'
 import type { ProducersResponse } from '@/types/producers'
 import { formatarCNPJ, formatarCPF } from '@/utils/validators'
@@ -40,7 +41,7 @@ export function ProducersList({
   onDelete,
 }: ProducersListProps) {
   return (
-    <S.CardsGrid>
+    <CardsGrid>
       {producers.map((producer) => (
         <EntityCard key={producer.id}>
           <EntityCardHeader
@@ -110,6 +111,6 @@ export function ProducersList({
           </EntityCardContent>
         </EntityCard>
       ))}
-    </S.CardsGrid>
+    </CardsGrid>
   )
 }

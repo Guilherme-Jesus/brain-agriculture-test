@@ -5,37 +5,37 @@ import {
   IconButton,
 } from '@/components/molecules/EntityCard'
 import CardsGrid from '@/components/templates/CardsGrid'
-import type { HarvestsResponse } from '@/types/harvests'
-import { Calendar, Edit, Trash2 } from 'lucide-react'
+import type { CulturesResponse } from '@/types/cultures'
+import { Edit, Leaf, Trash2 } from 'lucide-react'
 
-interface HarvestsListProps {
-  harvests: HarvestsResponse[]
-  onEdit: (harvest: HarvestsResponse) => void
-  onDelete: (harvest: HarvestsResponse) => void
+interface CulturesListProps {
+  cultures: CulturesResponse[]
+  onEdit: (culture: CulturesResponse) => void
+  onDelete: (culture: CulturesResponse) => void
 }
 
-export function HarvestsList({
-  harvests,
+export function CulturesList({
+  cultures,
   onEdit,
   onDelete,
-}: HarvestsListProps) {
+}: CulturesListProps) {
   return (
     <CardsGrid>
-      {harvests.map((harvest) => (
-        <EntityCard key={harvest.id}>
+      {cultures.map((culture) => (
+        <EntityCard key={culture.id}>
           <EntityCardHeader
-            icon={<Calendar size={20} />}
+            icon={<Leaf size={20} />}
             title={
               <Text variant="h3" weight="bold">
-                {harvest.name}
+                {culture.name}
               </Text>
             }
           >
-            <IconButton onClick={() => onEdit(harvest)} title="Editar">
+            <IconButton onClick={() => onEdit(culture)} title="Editar">
               <Edit size={16} />
             </IconButton>
             <IconButton
-              onClick={() => onDelete(harvest)}
+              onClick={() => onDelete(culture)}
               title="Excluir"
               variant="danger"
             >
