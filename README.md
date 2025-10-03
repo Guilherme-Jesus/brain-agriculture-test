@@ -10,16 +10,10 @@ Projeto fullstack desenvolvido como parte do desafio técnico da **Brain Agricul
 
 A aplicação está hospedada e pode ser acessada pelos links abaixo:
 
--   **🖥️ Frontend (Vercel):** **[Clique aqui para acessar a aplicação](https://brain-agriculture-test.vercel.app/)**
+-   **🖥️ Frontend (Vercel):** **[Clique aqui para acessar a aplicação](https://brain-agriculture-test-seven.vercel.app/)**
 -   **⚙️ Backend API Docs (Render):** **[Clique aqui para acessar a documentação da API](https://brain-agriculture-api-c5cj.onrender.com/api-docs)**
 
 *(Observação: O plano gratuito do Render pode fazer o backend "dormir" após um período de inatividade. O primeiro acesso à API pode levar até 30 segundos para carregar.)*
-
----
-
-## 🖼️ Preview
-
-![Dashboard Preview](https://i.imgur.com/link-para-imagem.png)
 
 ---
 
