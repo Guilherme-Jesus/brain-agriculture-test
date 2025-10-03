@@ -1,5 +1,4 @@
 import StatCard, { type StatCardData } from '@/components/molecules/StatCard'
-import type React from 'react'
 import styled from 'styled-components'
 
 interface StatsGridProps {
@@ -17,7 +16,7 @@ const GridWrapper = styled.div`
   }
 `
 
-export const StatsGrid: React.FC<StatsGridProps> = ({ stats }) => {
+export function StatsGrid({ stats }: StatsGridProps) {
   return (
     <GridWrapper>
       {stats.map((stat, index) => (

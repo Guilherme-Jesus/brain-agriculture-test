@@ -2,7 +2,6 @@
 import { store } from '@/store/store'
 import { theme } from '@/styles/theme'
 import { render, type RenderOptions } from '@testing-library/react'
-import { type ReactElement } from 'react'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import { ThemeProvider } from 'styled-components'
@@ -22,7 +21,7 @@ function AllTheProviders({ children }: AllTheProvidersProps) {
 }
 
 function customRender(
-  ui: ReactElement,
+  ui: React.ReactElement,
   options?: Omit<RenderOptions, 'wrapper'>
 ) {
   return render(ui, { wrapper: AllTheProviders, ...options })

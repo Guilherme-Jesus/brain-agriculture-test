@@ -23,7 +23,7 @@ import { toast } from 'react-toastify'
 import * as S from './planted-crops.styles'
 
 interface PlantedCropFormProps {
-  id?: string // ID para modo de edição
+  id?: string
   onSuccess: () => void
   onCancel: () => void
 }
