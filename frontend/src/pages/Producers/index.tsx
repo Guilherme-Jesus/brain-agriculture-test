@@ -1,5 +1,6 @@
 import Modal from '@/components/atoms/Modal'
 import ConfirmDialog from '@/components/molecules/ConfirmDialog'
+import { DataState } from '@/components/organisms/DataState'
 import PageHeader from '@/components/organisms/PageHeader'
 import { useGetAllFarmsQuery } from '@/store/api/farms-api'
 import {
@@ -24,7 +25,16 @@ export default function ProducersPage() {
   const [producerToDelete, setProducerToDelete] =
     useState<ProducersResponse | null>(null)
 
-  const { data: producers = [], isLoading } = useGetAllProducersQuery()
+  const { producers, isLoading, isError, refetch } = useGetAllProducersQuery(
+    undefined,
+    {
+      selectFromResult: ({ data, isLoading, isError }) => ({
+        producers: data ?? [],
+        isLoading,
+        isError,
+      }),
+    }
+  )
   const { data: farms = [] } = useGetAllFarmsQuery()
   const [deleteProducer, { isLoading: isDeleting }] =
     useDeleteProducerMutation()
@@ -89,15 +99,25 @@ export default function ProducersPage() {
         onActionClick={handleCreate}
       />
 
-      {isLoading ? (
-        <p>Carregando produtores...</p>
-      ) : (
+      <DataState
+        isLoading={isLoading}
+        isError={isError}
+        data={producers}
+        loadingMessage="Carregando produtores..."
+        errorTitle="Erro ao carregar produtores"
+        errorDescription="Não foi possível carregar os produtores. Verifique sua conexão e tente novamente."
+        emptyTitle="Nenhum produtor encontrado"
+        emptyDescription="Não há produtores cadastrados no sistema."
+        emptyActionLabel="+ Novo Produtor"
+        onRetry={refetch}
+        onEmptyAction={handleCreate}
+      >
         <ProducersList
           producers={producersWithStats}
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
-      )}
+      </DataState>
 
       <Modal
         isOpen={isFormModalOpen}

@@ -1,5 +1,6 @@
 import Modal from '@/components/atoms/Modal'
 import ConfirmDialog from '@/components/molecules/ConfirmDialog'
+import { DataState } from '@/components/organisms/DataState'
 import PageHeader from '@/components/organisms/PageHeader'
 import {
   useDeleteCultureMutation,
@@ -23,7 +24,16 @@ export default function CulturesPage() {
   const [cultureToDelete, setCultureToDelete] =
     useState<CulturesResponse | null>(null)
 
-  const { data: cultures = [], isLoading } = useGetAllCulturesQuery()
+  const { cultures, isLoading, isError, refetch } = useGetAllCulturesQuery(
+    undefined,
+    {
+      selectFromResult: ({ data, isLoading, isError }) => ({
+        cultures: data ?? [],
+        isLoading,
+        isError,
+      }),
+    }
+  )
   const [deleteCulture, { isLoading: isDeleting }] = useDeleteCultureMutation()
 
   const handleCreate = () => navigate('/cultures/new')
@@ -56,15 +66,25 @@ export default function CulturesPage() {
         onActionClick={handleCreate}
       />
 
-      {isLoading ? (
-        <p>Carregando culturas...</p>
-      ) : (
+      <DataState
+        isLoading={isLoading}
+        isError={isError}
+        data={cultures}
+        loadingMessage="Carregando culturas..."
+        errorTitle="Erro ao carregar culturas"
+        errorDescription="Não foi possível carregar as culturas. Verifique sua conexão e tente novamente."
+        emptyTitle="Nenhuma cultura encontrada"
+        emptyDescription="Não há culturas cadastradas no sistema."
+        emptyActionLabel="+ Nova Cultura"
+        onRetry={refetch}
+        onEmptyAction={handleCreate}
+      >
         <CulturesList
           cultures={cultures}
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
-      )}
+      </DataState>
 
       <Modal
         isOpen={isFormModalOpen}

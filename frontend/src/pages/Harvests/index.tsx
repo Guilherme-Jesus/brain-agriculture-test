@@ -1,5 +1,6 @@
 import Modal from '@/components/atoms/Modal'
 import ConfirmDialog from '@/components/molecules/ConfirmDialog'
+import { DataState } from '@/components/organisms/DataState'
 import PageHeader from '@/components/organisms/PageHeader'
 import {
   useDeleteHarvestMutation,
@@ -23,7 +24,16 @@ export default function HarvestsPage() {
   const [harvestToDelete, setHarvestToDelete] =
     useState<HarvestsResponse | null>(null)
 
-  const { data: harvests = [], isLoading } = useGetAllHarvestsQuery()
+  const { harvests, isLoading, isError, refetch } = useGetAllHarvestsQuery(
+    undefined,
+    {
+      selectFromResult: ({ data, isLoading, isError }) => ({
+        harvests: data ?? [],
+        isLoading,
+        isError,
+      }),
+    }
+  )
   const [deleteHarvest, { isLoading: isDeleting }] = useDeleteHarvestMutation()
 
   const handleCreate = () => navigate('/harvests/new')
@@ -56,15 +66,25 @@ export default function HarvestsPage() {
         onActionClick={handleCreate}
       />
 
-      {isLoading ? (
-        <p>Carregando safras...</p>
-      ) : (
+      <DataState
+        isLoading={isLoading}
+        isError={isError}
+        data={harvests}
+        loadingMessage="Carregando safras..."
+        errorTitle="Erro ao carregar safras"
+        errorDescription="Não foi possível carregar as safras. Verifique sua conexão e tente novamente."
+        emptyTitle="Nenhuma safra encontrada"
+        emptyDescription="Não há safras cadastradas no sistema."
+        emptyActionLabel="+ Nova Safra"
+        onRetry={refetch}
+        onEmptyAction={handleCreate}
+      >
         <HarvestsList
           harvests={harvests}
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
-      )}
+      </DataState>
 
       <Modal
         isOpen={isFormModalOpen}

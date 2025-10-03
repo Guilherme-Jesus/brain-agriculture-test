@@ -1,5 +1,6 @@
 import Modal from '@/components/atoms/Modal'
 import ConfirmDialog from '@/components/molecules/ConfirmDialog'
+import { DataState } from '@/components/organisms/DataState'
 import PageHeader from '@/components/organisms/PageHeader'
 import {
   useDeleteFarmMutation,
@@ -22,7 +23,16 @@ export default function FarmsPage() {
 
   const [farmToDelete, setFarmToDelete] = useState<FarmsResponse | null>(null)
 
-  const { data: farms = [], isLoading } = useGetAllFarmsQuery()
+  const { farms, isLoading, isError, refetch } = useGetAllFarmsQuery(
+    undefined,
+    {
+      selectFromResult: ({ data, isLoading, isError }) => ({
+        farms: data ?? [],
+        isLoading,
+        isError,
+      }),
+    }
+  )
   const [deleteFarm, { isLoading: isDeleting }] = useDeleteFarmMutation()
 
   const handleCreate = () => navigate('/farms/new')
@@ -54,11 +64,21 @@ export default function FarmsPage() {
         onActionClick={handleCreate}
       />
 
-      {isLoading ? (
-        <p>Carregando fazendas...</p>
-      ) : (
+      <DataState
+        isLoading={isLoading}
+        isError={isError}
+        data={farms}
+        loadingMessage="Carregando fazendas..."
+        errorTitle="Erro ao carregar fazendas"
+        errorDescription="Não foi possível carregar as fazendas. Verifique sua conexão e tente novamente."
+        emptyTitle="Nenhuma fazenda encontrada"
+        emptyDescription="Não há fazendas cadastradas no sistema."
+        emptyActionLabel="+ Nova Fazenda"
+        onRetry={refetch}
+        onEmptyAction={handleCreate}
+      >
         <FarmsList farms={farms} onEdit={handleEdit} onDelete={handleDelete} />
-      )}
+      </DataState>
 
       <Modal
         isOpen={isFormModalOpen}

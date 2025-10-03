@@ -1,5 +1,6 @@
 import Modal from '@/components/atoms/Modal'
 import ConfirmDialog from '@/components/molecules/ConfirmDialog'
+import { DataState } from '@/components/organisms/DataState'
 import PageHeader from '@/components/organisms/PageHeader'
 import {
   useDeletePlantedCropMutation,
@@ -24,7 +25,14 @@ export default function PlantedCropsPage() {
     null
   )
 
-  const { data: plantedCrops = [], isLoading } = useGetAllPlantedCropsQuery()
+  const { plantedCrops, isLoading, isError, refetch } =
+    useGetAllPlantedCropsQuery(undefined, {
+      selectFromResult: ({ data, isLoading, isError }) => ({
+        plantedCrops: data ?? [],
+        isLoading,
+        isError,
+      }),
+    })
   const [deletePlantedCrop, { isLoading: isDeleting }] =
     useDeletePlantedCropMutation()
 
@@ -58,15 +66,25 @@ export default function PlantedCropsPage() {
         onActionClick={handleCreate}
       />
 
-      {isLoading ? (
-        <p>Carregando plantios...</p>
-      ) : (
+      <DataState
+        isLoading={isLoading}
+        isError={isError}
+        data={plantedCrops}
+        loadingMessage="Carregando plantios..."
+        errorTitle="Erro ao carregar plantios"
+        errorDescription="Não foi possível carregar os plantios. Verifique sua conexão e tente novamente."
+        emptyTitle="Nenhum plantio encontrado"
+        emptyDescription="Não há plantios cadastrados no sistema."
+        emptyActionLabel="+ Novo Plantio"
+        onRetry={refetch}
+        onEmptyAction={handleCreate}
+      >
         <PlantedCropsList
           crops={plantedCrops}
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
-      )}
+      </DataState>
 
       <Modal
         isOpen={isFormModalOpen}
