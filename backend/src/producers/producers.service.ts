@@ -29,7 +29,7 @@ export class ProducersService {
 
     const producerData = {
       ...createProducerDto,
-      producerName: createProducerDto.producerName.trim().toLowerCase(),
+      producerName: createProducerDto.producerName,
     };
 
     const producer = this.producerRepository.create(producerData);
@@ -64,12 +64,6 @@ export class ProducersService {
     id: string,
     updateProducerDto: UpdateProducerDto,
   ): Promise<Producer> {
-    if (updateProducerDto.producerName) {
-      updateProducerDto.producerName = updateProducerDto.producerName
-        .trim()
-        .toLowerCase();
-    }
-
     if (updateProducerDto.document) {
       const existingProducerByDoc = await this.producerRepository.findOneBy({
         document: updateProducerDto.document,

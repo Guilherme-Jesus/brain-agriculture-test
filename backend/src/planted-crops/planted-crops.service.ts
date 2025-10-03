@@ -60,17 +60,23 @@ export class PlantedCropsService {
       throw new NotFoundException(`Harvest with ID "${harvestId}" not found.`);
     }
 
-    const existingCrops = await this.plantedCropRepository.find({
-      where: { farm: { id: farmId } },
+    const existingCropsInSameHarvest = await this.plantedCropRepository.find({
+      where: {
+        farm: { id: farmId },
+        harvest: { id: harvestId },
+      },
     });
-    const totalPlantedArea = existingCrops.reduce(
+
+    const totalPlantedAreaInHarvest = existingCropsInSameHarvest.reduce(
       (sum, crop) => sum + Number(crop.plantedArea),
       0,
     );
 
-    if (totalPlantedArea + plantedArea > farm.arableArea) {
+    if (totalPlantedAreaInHarvest + plantedArea > farm.arableArea) {
       throw new BadRequestException(
-        'The total planted area cannot exceed the arable area of the farm.',
+        `The total planted area for this harvest (${
+          totalPlantedAreaInHarvest + plantedArea
+        }ha) cannot exceed the arable area of the farm (${farm.arableArea}ha).`,
       );
     }
 
@@ -107,7 +113,7 @@ export class PlantedCropsService {
   ): Promise<PlantedCrop> {
     const plantedCropToUpdate = await this.plantedCropRepository.findOne({
       where: { id },
-      relations: ['farm'],
+      relations: ['farm', 'harvest'],
     });
 
     if (!plantedCropToUpdate) {
@@ -116,16 +122,23 @@ export class PlantedCropsService {
 
     if (updatePlantedCropDto.plantedArea !== undefined) {
       const farm = plantedCropToUpdate.farm;
+      const harvest = plantedCropToUpdate.harvest;
 
       if (!farm) {
         throw new BadRequestException('Associated farm not found.');
       }
+      if (!harvest) {
+        throw new BadRequestException('Associated harvest not found.');
+      }
 
-      const allCropsInFarm = await this.plantedCropRepository.find({
-        where: { farm: { id: farm.id } },
+      const allCropsInSameHarvest = await this.plantedCropRepository.find({
+        where: {
+          farm: { id: farm.id },
+          harvest: { id: harvest.id },
+        },
       });
 
-      const totalAreaOfOtherCrops = allCropsInFarm
+      const totalAreaOfOtherCrops = allCropsInSameHarvest
         .filter((crop) => crop.id !== id)
         .reduce((sum, crop) => sum + Number(crop.plantedArea), 0);
 

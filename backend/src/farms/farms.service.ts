@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PlantedCrop } from 'src/planted-crops/entities/planted-crop.entity';
 import { Producer } from 'src/producers/entities/producer.entity';
 import { Repository } from 'typeorm';
 import { CreateFarmDto } from './dto/create-farm.dto';
@@ -17,6 +18,8 @@ export class FarmsService {
     private readonly farmRepository: Repository<Farm>,
     @InjectRepository(Producer)
     private readonly producerRepository: Repository<Producer>,
+    @InjectRepository(PlantedCrop)
+    private readonly plantedCropRepository: Repository<PlantedCrop>,
   ) {}
 
   async create(createFarmDto: CreateFarmDto): Promise<Farm> {
@@ -62,28 +65,53 @@ export class FarmsService {
   }
 
   async update(id: string, updateFarmDto: UpdateFarmDto): Promise<Farm> {
-    const farmToUpdate = await this.farmRepository.preload({
-      id: id,
-      ...updateFarmDto,
+    // Primeiro, buscamos a fazenda como ela está hoje, com suas plantações
+    const farm = await this.farmRepository.findOne({
+      where: { id },
+      relations: ['plantedCrops'],
     });
 
-    if (!farmToUpdate) {
+    if (!farm) {
       throw new NotFoundException(`Farm with ID "${id}" not found.`);
     }
 
-    const totalArea = Number(farmToUpdate.totalArea);
-    const arableArea = Number(farmToUpdate.arableArea);
-    const vegetationArea = Number(farmToUpdate.vegetationArea);
+    // Pegamos os valores que estão vindo na requisição
+    const newArableArea = updateFarmDto.arableArea ?? farm.arableArea;
+    const newVegetationArea =
+      updateFarmDto.vegetationArea ?? farm.vegetationArea;
+    const newTotalArea = updateFarmDto.totalArea ?? farm.totalArea;
 
-    if (arableArea + vegetationArea > totalArea) {
+    // 1. Validação da regra de negócio que você já tinha
+    if (
+      Number(newArableArea) + Number(newVegetationArea) >
+      Number(newTotalArea)
+    ) {
       throw new BadRequestException(
         'The sum of arable and vegetation area cannot be greater than the total area.',
       );
     }
 
-    await this.farmRepository.save(farmToUpdate);
+    // 2. NOVA VALIDAÇÃO: Checar a área plantada existente contra a nova área agricultável
+    if (updateFarmDto.arableArea !== undefined) {
+      const totalPlantedArea = farm.plantedCrops.reduce(
+        (sum, crop) => sum + Number(crop.plantedArea),
+        0,
+      );
 
-    return this.findOne(id);
+      if (totalPlantedArea > Number(newArableArea)) {
+        throw new BadRequestException(
+          `Cannot update arable area to ${newArableArea}ha because there are already ${totalPlantedArea}ha of planted crops.`,
+        );
+      }
+    }
+
+    // Se passou em todas as validações, podemos salvar
+    const farmToUpdate = (await this.farmRepository.preload({
+      id,
+      ...updateFarmDto,
+    })) as Farm;
+
+    return this.farmRepository.save(farmToUpdate);
   }
 
   async remove(id: string): Promise<void> {
